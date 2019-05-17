@@ -2,9 +2,9 @@
 
 [![Compatible with Camunda Modeler version 3](https://img.shields.io/badge/Camunda%20Modeler-3+-blue.svg)](https://github.com/camunda/camunda-modeler)
 
-![Screenshot](./docs/screenshot.png)
-
 This [Camunda Modeler Plugin](https://github.com/camunda/camunda-modeler) adds the ability to document required inputs and produced outputs of a BPMN 2.0 process. To do that it adds a `I/O Specification` tab to the BPMN editor properties panel.
+
+![Screenshot](./docs/screenshot.png)
 
 
 ## Details
