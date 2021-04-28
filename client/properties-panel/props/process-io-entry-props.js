@@ -12,7 +12,7 @@ import {
 } from '../process-io-helper';
 
 
-function inputOutputEntries(element, bpmnFactory, options) {
+function inputOutputEntries(element, bpmnFactory, options, translate) {
 
   const {
     getSelectedParameter: getSelected
@@ -57,7 +57,7 @@ function inputOutputEntries(element, bpmnFactory, options) {
 
   // parameter name ///////////////
 
-  const nameEntry = entryFactory.validationAwareTextField({
+  const nameEntry = entryFactory.validationAwareTextField(translate, {
     id: 'parameterName',
     label: 'Name',
     modelProperty: 'name',
@@ -113,7 +113,7 @@ function inputOutputEntries(element, bpmnFactory, options) {
     { value: 'Date', name: 'Date' }
   ];
 
-  const typeEntry = entryFactory.selectBox({
+  const typeEntry = entryFactory.selectBox(translate, {
     id : 'dataType',
     label: 'Type',
     selectOptions: selectOptions,
@@ -140,7 +140,7 @@ function inputOutputEntries(element, bpmnFactory, options) {
 
   // description ///////////////
 
-  const descriptionEntry = entryFactory.textBox({
+  const descriptionEntry = entryFactory.textBox(translate, {
     id : 'parameterDescription',
     label : 'Description',
     modelProperty: 'description',

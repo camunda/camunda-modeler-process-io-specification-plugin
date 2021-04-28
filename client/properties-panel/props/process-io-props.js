@@ -82,7 +82,7 @@ function createCamundaProperties(parent, bpmnFactory, properties) {
 /**
  * Defines the input/output tab contents.
  */
-function inputOutput(element, bpmnFactory) {
+function inputOutput(element, bpmnFactory, translate) {
 
   var processBo = getBusinessObject(element);
 
@@ -177,7 +177,7 @@ function inputOutput(element, bpmnFactory) {
 
     setOptionLabelValue: setOptionLabelValue(getInputParameter)
 
-  });
+  }, translate);
 
 
   // output parameters ///////////////////////////
@@ -204,7 +204,7 @@ function inputOutput(element, bpmnFactory) {
 
     setOptionLabelValue: setOptionLabelValue(getOutputParameter)
 
-  });
+  }, translate);
 
 
   function getSelectedParameter(element, node) {
