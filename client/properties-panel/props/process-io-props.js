@@ -4,8 +4,6 @@ import {
 } from 'bpmn-js/lib/util/ModelUtil';
 
 import elementHelper from 'bpmn-js-properties-panel/lib/helper/ElementHelper';
-import extensionElementsHelper from 'bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper';
-import inputOutputHelper from 'bpmn-js-properties-panel/lib/helper/InputOutputHelper';
 import cmdHelper from 'bpmn-js-properties-panel/lib/helper/CmdHelper';
 
 import Ids from 'ids';
@@ -48,7 +46,7 @@ function getIoProperties(element, type) {
 
   return (
     properties
-      .filter(property => isIoProperty)
+      .filter(property => isIoProperty(property))
       .filter(property => parseIoProperty(property).type === type)
   );
 }

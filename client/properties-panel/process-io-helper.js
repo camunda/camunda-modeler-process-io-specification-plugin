@@ -8,8 +8,7 @@
 export function isIoProperty(prop) {
 
   const {
-    name,
-    value
+    name
   } = prop;
 
   return /^(input|output):/.test(name);
