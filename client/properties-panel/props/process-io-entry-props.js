@@ -1,7 +1,3 @@
-import { is } from 'bpmn-js/lib/util/ModelUtil';
-
-import elementHelper from 'bpmn-js-properties-panel/lib/helper/ElementHelper';
-import cmdHelper from 'bpmn-js-properties-panel/lib/helper/CmdHelper';
 import { containsSpace } from 'bpmn-js-properties-panel/lib/Utils';
 
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
@@ -12,7 +8,7 @@ import {
 } from '../process-io-helper';
 
 
-function inputOutputEntries(element, bpmnFactory, options, translate) {
+function inputOutputEntries(element, options, translate) {
 
   const {
     getSelectedParameter: getSelected
