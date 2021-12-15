@@ -73,3 +73,17 @@ export function getIoPropertyProps(options) {
 export function createIoProperty(factory, options) {
   return factory.create('camunda:Property', getIoPropertyProps(options));
 }
+
+/**
+ * Craft the UPDATE command to set a property value.
+ */
+export function updateIoProperty(element, property, newProps, modeling) {
+  const currentProps = parseIoProperty(property);
+
+  const props = getIoPropertyProps({
+    ...currentProps,
+    ...newProps
+  });
+
+  return modeling.updateModdleProperties(element, property, props);
+}
