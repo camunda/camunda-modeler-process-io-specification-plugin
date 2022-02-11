@@ -99,10 +99,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _properties_panel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./properties-panel */ "./client/properties-panel/index.js");
 
 
-
-
 Object(camunda_modeler_plugin_helpers__WEBPACK_IMPORTED_MODULE_0__["registerPlatformBpmnJSPlugin"])(_properties_panel__WEBPACK_IMPORTED_MODULE_1__["default"]);
-
 
 /***/ }),
 
@@ -125,7 +122,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
 
 
-
 function findExtensions(element, types) {
   const extensionElements = getExtensionElements(element);
 
@@ -133,20 +129,16 @@ function findExtensions(element, types) {
     return [];
   }
 
-  return extensionElements.get('values').filter((value) => {
+  return extensionElements.get('values').filter(value => {
     return Object(bpmn_js_lib_features_modeling_util_ModelingUtil__WEBPACK_IMPORTED_MODULE_0__["isAny"])(value, [].concat(types));
   });
 }
-
 function getExtensionElements(element) {
   const businessObject = Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__["getBusinessObject"])(element);
-
   return businessObject.get('extensionElements');
 }
-
 function getCamundaProperties(element) {
   const bo = Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__["getBusinessObject"])(element);
-
   const properties = findExtensions(bo, 'camunda:Properties') || [];
 
   if (properties.length) {
@@ -155,24 +147,20 @@ function getCamundaProperties(element) {
 
   return null;
 }
-
 function createExtensionElements(element, bpmnFactory) {
   const bo = Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__["getBusinessObject"])(element);
-
-  return createElement('bpmn:ExtensionElements', { values: [] }, bo, bpmnFactory);
+  return createElement('bpmn:ExtensionElements', {
+    values: []
+  }, bo, bpmnFactory);
 }
-
 function createCamundaProperties(extensionElements, bpmnFactory, properties) {
   return createElement('camunda:Properties', properties, extensionElements, bpmnFactory);
 }
-
 function createElement(elementType, properties, parent, factory) {
   const element = factory.create(elementType, properties);
   element.$parent = parent;
-
   return element;
 }
-
 
 /***/ }),
 
@@ -187,10 +175,9 @@ function createElement(elementType, properties, parent, factory) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _process_io_extension_provider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./process-io-extension-provider */ "./client/properties-panel/process-io-extension-provider.js");
 
-
 /* harmony default export */ __webpack_exports__["default"] = ({
-  __init__: [ 'processIoExtensionProvider' ],
-  processIoExtensionProvider: [ 'type', _process_io_extension_provider__WEBPACK_IMPORTED_MODULE_0__["default"] ]
+  __init__: ['processIoExtensionProvider'],
+  processIoExtensionProvider: ['type', _process_io_extension_provider__WEBPACK_IMPORTED_MODULE_0__["default"]]
 });
 
 /***/ }),
@@ -209,16 +196,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _props_process_io_groups__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./props/process-io-groups */ "./client/properties-panel/props/process-io-groups.js");
 
 
-
-
-
-
 /**
  * An extension that makes process IO mappings configurable via a new
  * properties tab.
  *
  * @param {didi.Injector} injector
  */
+
 class ProcessIoExtensionProvider {
   constructor(propertiesPanel, injector) {
     this._injector = injector;
@@ -232,29 +216,18 @@ class ProcessIoExtensionProvider {
       }
 
       groups = groups.slice();
-
-      groups.splice(1, 0,
-        Object(_props_process_io_groups__WEBPACK_IMPORTED_MODULE_1__["createInputSpecificationGroup"])(element, this._injector),
-        Object(_props_process_io_groups__WEBPACK_IMPORTED_MODULE_1__["createOutputSpecificationGroup"])(element, this._injector)
-      );
-
+      groups.splice(1, 0, Object(_props_process_io_groups__WEBPACK_IMPORTED_MODULE_1__["createInputSpecificationGroup"])(element, this._injector), Object(_props_process_io_groups__WEBPACK_IMPORTED_MODULE_1__["createOutputSpecificationGroup"])(element, this._injector));
       return groups;
-    }
+    };
   }
+
 }
-
-ProcessIoExtensionProvider.$inject = [
-  'propertiesPanel',
-  'injector'
-];
-
+ProcessIoExtensionProvider.$inject = ['propertiesPanel', 'injector'];
 
 function getProcessRef(element) {
   const bo = Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_0__["getBusinessObject"])(element);
-
   return bo.processRef;
 }
-
 
 /***/ }),
 
@@ -281,14 +254,11 @@ __webpack_require__.r(__webpack_exports__);
  * @return {boolean}
  */
 function isIoProperty(prop) {
-
   const {
     name
   } = prop;
-
   return /^(input|output):/.test(name);
 }
-
 function parseIoPropertyValue(value) {
   try {
     return JSON.parse(value);
@@ -296,7 +266,6 @@ function parseIoPropertyValue(value) {
     return {};
   }
 }
-
 /**
  * Parse <camunda:property name="{input|output}:$variableName" value="$type;$description" />.
  *
@@ -304,20 +273,10 @@ function parseIoPropertyValue(value) {
  *
  * @return {Object}
  */
+
 function parseIoProperty(prop) {
-
-  const [
-    _0,
-    type,
-    name
-  ] = /^(input|output):(.*)/.exec(prop.name);
-
-  const [
-    _1,
-    dataType,
-    description
-  ] = /^([^;]+);(.*)/s.exec(prop.value);
-
+  const [_0, type, name] = /^(input|output):(.*)/.exec(prop.name);
+  const [_1, dataType, description] = /^([^;]+);(.*)/s.exec(prop.value);
   return {
     name,
     type,
@@ -325,44 +284,34 @@ function parseIoProperty(prop) {
     description
   };
 }
-
 function getIoPropertyProps(options) {
-
   var {
     name,
     type,
     dataType,
     description
   } = options;
-
   var propertyName = `${type}:${name}`;
-
   var propertyValue = `${dataType};${description}`;
-
   return {
     name: propertyName,
     value: propertyValue
   };
 }
-
 function createIoProperty(factory, options) {
   return factory.create('camunda:Property', getIoPropertyProps(options));
 }
-
 /**
  * Craft the UPDATE command to set a property value.
  */
+
 function updateIoProperty(element, property, newProps, modeling) {
   const currentProps = parseIoProperty(property);
-
-  const props = getIoPropertyProps({
-    ...currentProps,
+  const props = getIoPropertyProps({ ...currentProps,
     ...newProps
   });
-
   return modeling.updateModdleProperties(element, property, props);
 }
-
 
 /***/ }),
 
@@ -392,29 +341,18 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-
-
-
-
-
-const ids = new ids__WEBPACK_IMPORTED_MODULE_5__["default"]([ 16, 36, 1 ]);
-
+const ids = new ids__WEBPACK_IMPORTED_MODULE_5__["default"]([16, 36, 1]);
 function createInputSpecificationGroup(element, injector) {
   const translate = injector.get('translate');
-
   const processBo = getProcessBo(element);
-
   const properties = getIOSpecificationProperties('input', processBo);
-
   const inputSpecificationGroup = {
     id: 'input-specification-group',
     label: translate('Input specification'),
     component: _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_2__["ListGroup"],
     add: addPropertyFactory('input', element, injector),
-    items: properties.map(function(property, index) {
+    items: properties.map(function (property, index) {
       const id = `${element.id}-input-specification-${index}`;
-
       return PropertyItem({
         id,
         element,
@@ -423,25 +361,19 @@ function createInputSpecificationGroup(element, injector) {
       });
     })
   };
-
   return inputSpecificationGroup;
 }
-
 function createOutputSpecificationGroup(element, injector) {
   const translate = injector.get('translate');
-
   const processBo = getProcessBo(element);
-
   const properties = getIOSpecificationProperties('output', processBo);
-
   const outputSpecificationGroup = {
     id: 'output-specification-group',
     label: translate('Output specification'),
     component: _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_2__["ListGroup"],
     add: addPropertyFactory('output', element, injector),
-    items: properties.map(function(property, index) {
+    items: properties.map(function (property, index) {
       const id = `${element.id}-output-specification-${index}`;
-
       return PropertyItem({
         id,
         element,
@@ -450,10 +382,8 @@ function createOutputSpecificationGroup(element, injector) {
       });
     })
   };
-
   return outputSpecificationGroup;
 }
-
 
 function addPropertyFactory(propertyType, element, injector) {
   const bpmnFactory = injector.get('bpmnFactory'),
@@ -461,42 +391,43 @@ function addPropertyFactory(propertyType, element, injector) {
 
   function add(event) {
     event.stopPropagation();
-
     const property = Object(_process_io_helper__WEBPACK_IMPORTED_MODULE_3__["createIoProperty"])(bpmnFactory, {
       type: propertyType,
       name: `var_${ids.next()}`,
       dataType: 'String',
       description: ''
     });
-
     const businessObject = Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__["getBusinessObject"])(element);
-
     const extensionElements = Object(_extensions_helper__WEBPACK_IMPORTED_MODULE_4__["getExtensionElements"])(element),
           camundaProperties = Object(_extensions_helper__WEBPACK_IMPORTED_MODULE_4__["getCamundaProperties"])(businessObject);
-
     let updatedBusinessObject, update;
 
     if (!extensionElements) {
       updatedBusinessObject = businessObject;
-
       const extensionElements = Object(_extensions_helper__WEBPACK_IMPORTED_MODULE_4__["createExtensionElements"])(businessObject, bpmnFactory),
-            camundaProperties = Object(_extensions_helper__WEBPACK_IMPORTED_MODULE_4__["createCamundaProperties"])(extensionElements, bpmnFactory, { values: [ property ] });
+            camundaProperties = Object(_extensions_helper__WEBPACK_IMPORTED_MODULE_4__["createCamundaProperties"])(extensionElements, bpmnFactory, {
+        values: [property]
+      });
       extensionElements.values.push(camundaProperties);
       property.$parent = camundaProperties;
-
-      update = { extensionElements };
+      update = {
+        extensionElements
+      };
     } else if (!camundaProperties) {
       updatedBusinessObject = extensionElements;
-
-      const camundaProperties = Object(_extensions_helper__WEBPACK_IMPORTED_MODULE_4__["createCamundaProperties"])(extensionElements, bpmnFactory, { values: [ property ] });
+      const camundaProperties = Object(_extensions_helper__WEBPACK_IMPORTED_MODULE_4__["createCamundaProperties"])(extensionElements, bpmnFactory, {
+        values: [property]
+      });
       property.$parent = camundaProperties;
-
-      update = { values: extensionElements.get('values').concat(camundaProperties) };
+      update = {
+        values: extensionElements.get('values').concat(camundaProperties)
+      };
     } else {
       updatedBusinessObject = camundaProperties;
       property.$parent = camundaProperties;
-
-      update = { values: camundaProperties.get('values').concat(property) };
+      update = {
+        values: camundaProperties.get('values').concat(property)
+      };
     }
 
     modeling.updateModdleProperties(element, updatedBusinessObject, update);
@@ -506,13 +437,10 @@ function addPropertyFactory(propertyType, element, injector) {
 }
 
 function removeFactory(element, property, modeling) {
-  return function(event) {
+  return function (event) {
     event.stopPropagation();
-
     const businessObject = Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__["getBusinessObject"])(element);
-
     const camundaProperties = Object(_extensions_helper__WEBPACK_IMPORTED_MODULE_4__["getCamundaProperties"])(businessObject);
-
     modeling.updateModdleProperties(element, camundaProperties, {
       values: camundaProperties.get('values').filter(value => value !== property)
     });
@@ -526,32 +454,26 @@ function PropertyItem(props) {
     property,
     injector
   } = props;
-
   const parsed = Object(_process_io_helper__WEBPACK_IMPORTED_MODULE_3__["parseIoProperty"])(property);
-
   return {
     id,
     label: `${parsed.name || ''} : ${parsed.dataType}`,
-    entries: [
-      {
-        id: `${id}-name`,
-        component: Name,
-        property,
-        element
-      },
-      {
-        id: `${id}-type`,
-        component: Type,
-        property,
-        element
-      },
-      {
-        id: `${id}-description`,
-        component: Description,
-        property,
-        element
-      }
-    ],
+    entries: [{
+      id: `${id}-name`,
+      component: Name,
+      property,
+      element
+    }, {
+      id: `${id}-type`,
+      component: Type,
+      property,
+      element
+    }, {
+      id: `${id}-description`,
+      component: Description,
+      property,
+      element
+    }],
     autoFocusEntry: id + '-name',
     remove: removeFactory(element, property, injector.get('modeling'))
   };
@@ -563,21 +485,22 @@ function Name(props) {
     element,
     property
   } = props;
-
   const modeling = Object(bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__["useService"])('modeling');
   const translate = Object(bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__["useService"])('translate');
   const debounce = Object(bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__["useService"])('debounceInput');
 
-  const setValue = (value) => {
-    Object(_process_io_helper__WEBPACK_IMPORTED_MODULE_3__["updateIoProperty"])(element, property, { name: value || '' }, modeling);
+  const setValue = value => {
+    Object(_process_io_helper__WEBPACK_IMPORTED_MODULE_3__["updateIoProperty"])(element, property, {
+      name: value || ''
+    }, modeling);
   };
 
   const getValue = () => {
     return Object(_process_io_helper__WEBPACK_IMPORTED_MODULE_3__["parseIoProperty"])(property).name || '';
-  };
+  }; // return error if contains spaces
 
-  // return error if contains spaces
-  const validate = (value) => {
+
+  const validate = value => {
     if (!value) {
       return translate('Parameter must have a name.');
     }
@@ -604,12 +527,13 @@ function Type(props) {
     element,
     property
   } = props;
-
   const modeling = Object(bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__["useService"])('modeling');
   const translate = Object(bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__["useService"])('translate');
 
-  const setValue = (value) => {
-    Object(_process_io_helper__WEBPACK_IMPORTED_MODULE_3__["updateIoProperty"])(element, property, { dataType: value }, modeling);
+  const setValue = value => {
+    Object(_process_io_helper__WEBPACK_IMPORTED_MODULE_3__["updateIoProperty"])(element, property, {
+      dataType: value
+    }, modeling);
   };
 
   const getValue = () => {
@@ -620,15 +544,26 @@ function Type(props) {
     element: property,
     id,
     label: translate('Type'),
+
     getOptions() {
-      return [
-        { value: 'String', label: translate('String') },
-        { value: 'int', label: translate('int') },
-        { value: 'boolean', label: translate('boolean') },
-        { value: 'double', label: translate('double') },
-        { value: 'Date', label: translate('Date') }
-      ];
+      return [{
+        value: 'String',
+        label: translate('String')
+      }, {
+        value: 'int',
+        label: translate('int')
+      }, {
+        value: 'boolean',
+        label: translate('boolean')
+      }, {
+        value: 'double',
+        label: translate('double')
+      }, {
+        value: 'Date',
+        label: translate('Date')
+      }];
     },
+
     getValue,
     setValue
   });
@@ -640,13 +575,14 @@ function Description(props) {
     element,
     property
   } = props;
-
   const modeling = Object(bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__["useService"])('modeling');
   const translate = Object(bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__["useService"])('translate');
   const debounce = Object(bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__["useService"])('debounceInput');
 
-  const setValue = (value) => {
-    Object(_process_io_helper__WEBPACK_IMPORTED_MODULE_3__["updateIoProperty"])(element, property, { description: value || '' }, modeling);
+  const setValue = value => {
+    Object(_process_io_helper__WEBPACK_IMPORTED_MODULE_3__["updateIoProperty"])(element, property, {
+      description: value || ''
+    }, modeling);
   };
 
   const getValue = () => {
@@ -661,14 +597,13 @@ function Description(props) {
     setValue,
     debounce
   });
-}
-
-
-// helper
+} // helper
 
 /**
  * Get process business object from process element or participant.
  */
+
+
 function getProcessBo(element) {
   const bo = Object(bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__["getBusinessObject"])(element);
 
@@ -686,11 +621,8 @@ function getIOSpecificationProperties(type, processBo) {
     return [];
   }
 
-  return camundaProperties.get('values')
-    .filter(property => Object(_process_io_helper__WEBPACK_IMPORTED_MODULE_3__["isIoProperty"])(property))
-    .filter(property => Object(_process_io_helper__WEBPACK_IMPORTED_MODULE_3__["parseIoProperty"])(property).type === type);
+  return camundaProperties.get('values').filter(property => Object(_process_io_helper__WEBPACK_IMPORTED_MODULE_3__["isIoProperty"])(property)).filter(property => Object(_process_io_helper__WEBPACK_IMPORTED_MODULE_3__["parseIoProperty"])(property).type === type);
 }
-
 
 /***/ }),
 
@@ -818,7 +750,7 @@ module.exports.returnOrThrow = function(getter, minimalModelerVersion) {
 /*!**************************************************************!*\
   !*** ./node_modules/camunda-modeler-plugin-helpers/index.js ***!
   \**************************************************************/
-/*! exports provided: registerClientPlugin, registerClientExtension, registerBpmnJSPlugin, registerPlatformBpmnJSPlugin, registerCloudBpmnJSPlugin, registerBpmnJSModdleExtension, registerPlatformBpmnJSModdleExtension, registerCloudBpmnJSModdleExtension, registerDmnJSModdleExtension, registerDmnJSPlugin, getModelerDirectory, getPluginsDirectory */
+/*! exports provided: registerClientPlugin, registerClientExtension, registerBpmnJSPlugin, registerPlatformBpmnJSPlugin, registerCloudBpmnJSPlugin, registerBpmnJSModdleExtension, registerPlatformBpmnJSModdleExtension, registerCloudBpmnJSModdleExtension, registerDmnJSModdleExtension, registerCloudDmnJSModdleExtension, registerPlatformDmnJSModdleExtension, registerDmnJSPlugin, registerCloudDmnJSPlugin, registerPlatformDmnJSPlugin, getModelerDirectory, getPluginsDirectory */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -832,7 +764,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "registerPlatformBpmnJSModdleExtension", function() { return registerPlatformBpmnJSModdleExtension; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "registerCloudBpmnJSModdleExtension", function() { return registerCloudBpmnJSModdleExtension; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "registerDmnJSModdleExtension", function() { return registerDmnJSModdleExtension; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "registerCloudDmnJSModdleExtension", function() { return registerCloudDmnJSModdleExtension; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "registerPlatformDmnJSModdleExtension", function() { return registerPlatformDmnJSModdleExtension; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "registerDmnJSPlugin", function() { return registerDmnJSPlugin; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "registerCloudDmnJSPlugin", function() { return registerCloudDmnJSPlugin; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "registerPlatformDmnJSPlugin", function() { return registerPlatformDmnJSPlugin; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getModelerDirectory", function() { return getModelerDirectory; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPluginsDirectory", function() { return getPluginsDirectory; });
 /**
@@ -1037,6 +973,54 @@ function registerDmnJSModdleExtension(descriptor) {
 }
 
 /**
+ * Validate and register a cloud specific dmn-moddle extension plugin.
+ *
+ * @param {Object} descriptor
+ *
+ * @example
+ * import {
+ *   registerCloudDmnJSModdleExtension
+ * } from 'camunda-modeler-plugin-helpers';
+ *
+ * var moddleDescriptor = {
+ *   name: 'my descriptor',
+ *   uri: 'http://example.my.company.localhost/schema/my-descriptor/1.0',
+ *   prefix: 'mydesc',
+ *
+ *   ...
+ * };
+ *
+ * registerCloudDmnJSModdleExtension(moddleDescriptor);
+ */
+function registerCloudDmnJSModdleExtension(descriptor) {
+  registerClientPlugin(descriptor, 'dmn.cloud.modeler.moddleExtension');
+}
+
+/**
+ * Validate and register a platform specific dmn-moddle extension plugin.
+ *
+ * @param {Object} descriptor
+ *
+ * @example
+ * import {
+ *   registerPlatformDmnJSModdleExtension
+ * } from 'camunda-modeler-plugin-helpers';
+ *
+ * var moddleDescriptor = {
+ *   name: 'my descriptor',
+ *   uri: 'http://example.my.company.localhost/schema/my-descriptor/1.0',
+ *   prefix: 'mydesc',
+ *
+ *   ...
+ * };
+ *
+ * registerPlatformDmnJSModdleExtension(moddleDescriptor);
+ */
+function registerPlatformDmnJSModdleExtension(descriptor) {
+  registerClientPlugin(descriptor, 'dmn.platform.modeler.moddleExtension');
+}
+
+/**
  * Validate and register a dmn-js plugin.
  *
  * @param {Object} module
@@ -1061,7 +1045,63 @@ function registerDmnJSPlugin(module, components) {
     components = [ components ]
   }
 
-  components.forEach(c => registerClientPlugin(module, `dmn.modeler.${c}.additionalModules`)); 
+  components.forEach(c => registerClientPlugin(module, `dmn.modeler.${c}.additionalModules`));
+}
+
+/**
+ * Validate and register a cloud specific dmn-js plugin.
+ *
+ * @param {Object} module
+ *
+ * @example
+ *
+ * import {
+ *   registerCloudDmnJSPlugin
+ * } from 'camunda-modeler-plugin-helpers';
+ *
+ * const DmnJSModule = {
+ *   __init__: [ 'myService' ],
+ *   myService: [ 'type', ... ]
+ * };
+ *
+ * registerCloudDmnJSPlugin(DmnJSModule, [ 'drd', 'literalExpression' ]);
+ * registerCloudDmnJSPlugin(DmnJSModule, 'drd')
+ */
+function registerCloudDmnJSPlugin(module, components) {
+
+  if (!Array.isArray(components)) {
+    components = [ components ]
+  }
+
+  components.forEach(c => registerClientPlugin(module, `dmn.cloud.modeler.${c}.additionalModules`));
+}
+
+/**
+ * Validate and register a platform specific dmn-js plugin.
+ *
+ * @param {Object} module
+ *
+ * @example
+ *
+ * import {
+ *   registerPlatformDmnJSPlugin
+ * } from 'camunda-modeler-plugin-helpers';
+ *
+ * const DmnJSModule = {
+ *   __init__: [ 'myService' ],
+ *   myService: [ 'type', ... ]
+ * };
+ *
+ * registerPlatformDmnJSPlugin(DmnJSModule, [ 'drd', 'literalExpression' ]);
+ * registerPlatformDmnJSPlugin(DmnJSModule, 'drd')
+ */
+function registerPlatformDmnJSPlugin(module, components) {
+
+  if (!Array.isArray(components)) {
+    components = [ components ]
+  }
+
+  components.forEach(c => registerClientPlugin(module, `dmn.platform.modeler.${c}.additionalModules`));
 }
 
 /**

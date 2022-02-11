@@ -1,5 +1,7 @@
 const path = require('path');
 
+const CamundaModelerWebpackPlugin = require('camunda-modeler-webpack-plugin');
+
 module.exports = {
   mode: 'development',
   entry: './client/client.js',
@@ -8,10 +10,7 @@ module.exports = {
     filename: 'client-bundle.js'
   },
   devtool: 'cheap-module-source-map',
-  resolve: {
-    alias: {
-      '@bpmn-io/properties-panel': 'camunda-modeler-plugin-helpers/vendor/@bpmn-io/properties-panel',
-      'bpmn-js-properties-panel': 'camunda-modeler-plugin-helpers/vendor/bpmn-js-properties-panel'
-    }
-  }
+  plugins: [
+    new CamundaModelerWebpackPlugin()
+  ]
 };
