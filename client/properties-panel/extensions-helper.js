@@ -41,30 +41,6 @@ export function createCamundaProperties(extensionElements, bpmnFactory, properti
   return createElement('camunda:Properties', properties, extensionElements, bpmnFactory);
 }
 
-function getIoProperties(element, type) {
-  const properties = getProperties(element);
-
-  return (
-    properties
-      .filter(property => isIoProperty(property))
-      .filter(property => parseIoProperty(property).type === type)
-  );
-}
-
-function getProperties(element) {
-  const propertiesParent = getInputOutput(element);
-
-  return propertiesParent ? propertiesParent.get('values') : [];
-}
-
-function getInputParameters(element) {
-  return getIoProperties(element, 'input');
-}
-
-function getOutputParameters(element) {
-  return getIoProperties(element, 'output');
-}
-
 export function createElement(elementType, properties, parent, factory) {
   const element = factory.create(elementType, properties);
   element.$parent = parent;

@@ -158,15 +158,21 @@ function PropertyItem(props) {
     entries: [
       {
         id: `${id}-name`,
-        component: <Name idPrefix={id} element={element} property={property} />
+        component: Name,
+        property,
+        element
       },
       {
         id: `${id}-type`,
-        component: <Type idPrefix={id} element={element} property={property} />
+        component: Type,
+        property,
+        element
       },
       {
         id: `${id}-description`,
-        component: <Description idPrefix={id} element={element} property={property} />
+        component: Description,
+        property,
+        element
       }
     ],
     autoFocusEntry: id + '-name',
@@ -176,7 +182,7 @@ function PropertyItem(props) {
 
 function Name(props) {
   const {
-    idPrefix,
+    id,
     element,
     property
   } = props;
@@ -206,7 +212,7 @@ function Name(props) {
 
   return TextFieldEntry({
     element: property,
-    id: idPrefix + '-name',
+    id,
     label: translate('Name'),
     getValue,
     setValue,
@@ -217,7 +223,7 @@ function Name(props) {
 
 function Type(props) {
   const {
-    idPrefix,
+    id,
     element,
     property
   } = props;
@@ -235,7 +241,7 @@ function Type(props) {
 
   return SelectEntry({
     element: property,
-    id: idPrefix + '-type',
+    id,
     label: translate('Type'),
     getOptions() {
       return [
@@ -253,7 +259,7 @@ function Type(props) {
 
 function Description(props) {
   const {
-    idPrefix,
+    id,
     element,
     property
   } = props;
@@ -272,7 +278,7 @@ function Description(props) {
 
   return TextAreaEntry({
     element: property,
-    id: idPrefix + '-description',
+    id,
     label: translate('Description'),
     getValue,
     setValue,
