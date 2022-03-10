@@ -54,7 +54,7 @@ This plugin is currently only compatible with following Camunda Modeler versions
 | Camunda Modeler | Plugin         |
 |-----------------|----------------|
 | 4.3 - 4.12      | 0.1.0          |
-| 5.x             | 0.2.0 or newer |
+| 5.x             | 0.3.0 or newer |
 
 
 ## Additional Resources
