@@ -6,9 +6,14 @@ All notable changes to [camunda-modeler-process-io-specification-plugin](https:/
 
 ___Note:__ Yet to be released changes appear here._
 
+## 0.3.0
+
+* `FEAT`: migrate to `bpmn-js-properties-panel@1.0.0-alpha.5` API
+* `CHORE`: opt out of cloud diagrams in Camunda Modeler 5.0.0
+
 ## 0.2.0
 
-* `FEAT`: migrate to Camunda Modeler 5.x
+* `FEAT`: migrate to Camunda Modeler 5.0.0-alpha.0
 
 ## 0.1.0
 
