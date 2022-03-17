@@ -1,6 +1,6 @@
 # Camunda Modeler Process I/O Specification Plug-in
 
-[![CI](https://github.com/camunda/camunda-modeler-process-io-specification-plugin/workflows/CI/badge.svg)](https://github.com/camunda/camunda-modeler-process-io-specification-plugin/actions?query=workflow%3ACI) [![Compatible with Camunda Modeler version 5](https://img.shields.io/badge/Modeler_Version-5.0.0+-blue.svg)](./README.md#compatibility-notice) [![Plugin Type](https://img.shields.io/badge/Plugin_Type-BPMN_(Camunda_Platform_7)-green.svg)](#)
+[![CI](https://github.com/camunda/camunda-modeler-process-io-specification-plugin/workflows/CI/badge.svg)](https://github.com/camunda/camunda-modeler-process-io-specification-plugin/actions?query=workflow%3ACI) [![Compatible with Camunda Modeler version 5](https://img.shields.io/badge/Modeler_Version-5.0.0+-blue.svg)](./README.md#compatibility-notice) [![Plugin Type](https://img.shields.io/badge/Plugin_Type-BPMN_(Camunda_Platform_7)-orange.svg)](#)
 
 This [Camunda Modeler Plugin](https://github.com/camunda/camunda-modeler) adds the ability to document required inputs and produced outputs of a BPMN 2.0 process. To do that it adds a `I/O Specification` tab to the BPMN editor properties panel.
 
