@@ -1,6 +1,6 @@
 {
   "name": "camunda-modeler-process-io-specification-plugin",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Document BPMN process inputs and outputs using the Camunda Modeler",
   "main": "index.js",
   "scripts": {
