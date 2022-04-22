@@ -59,7 +59,7 @@ This plugin is currently only compatible with following Camunda Modeler versions
 
 ## Additional Resources
 
-* [Plugins documentation](https://github.com/camunda/camunda-modeler/tree/master/docs/plugins)
+* [Plugins documentation](https://docs.camunda.io/docs/components/modeler/desktop-modeler/plugins/)
 
 
 ## Licence
