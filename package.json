@@ -28,8 +28,8 @@
     "webpack-cli": "^5.0.1"
   },
   "dependencies": {
-    "bpmn-js": "^8.8.3",
-    "diagram-js": "^7.2.3",
-    "inherits": "^2.0.3"
+    "bpmn-js": "^16.4.0",
+    "diagram-js": "^13.4.0",
+    "inherits-browser": "^0.1.0"
   }
 }
