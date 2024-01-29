@@ -6,6 +6,10 @@ All notable changes to [camunda-modeler-process-io-specification-plugin](https:/
 
 ___Note:__ Yet to be released changes appear here._
 
+## 0.4.0
+
+* `FEAT`: update dependencies
+
 ## 0.3.0
 
 * `FEAT`: migrate to `bpmn-js-properties-panel@1.0.0-alpha.5` API
