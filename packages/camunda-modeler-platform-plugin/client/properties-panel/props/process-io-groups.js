@@ -19,7 +19,7 @@ import {
   getCamundaProperties
 } from '../extensions-helper';
 
-import Ids from 'ids';
+import { Ids } from 'ids';
 
 const ids = new Ids([ 16, 36, 1 ]);
 
