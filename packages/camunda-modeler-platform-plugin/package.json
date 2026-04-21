@@ -21,7 +21,7 @@
   "author": "Nico Rehwaldt",
   "license": "MIT",
   "devDependencies": {
-    "@babel/core": "^7.23.9",
+    "@babel/core": "^7.29.0",
     "camunda-modeler-plugin-helpers": "^5.0.0",
     "camunda-modeler-webpack-plugin": "^0.1.0",
     "webpack": "^5.106.2",
