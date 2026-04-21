@@ -19,7 +19,8 @@
   "workspaces": [
     "./packages/zeebe-io-moddle",
     "./packages/zeebe-io-properties-panel-extension",
-    "./packages/camunda-modeler-platform-plugin"
+    "./packages/camunda-modeler-platform-plugin",
+    "./packages/camunda-modeler-cloud-plugin"
   ],
   "scripts": {
     "test": "npm run test --workspaces --if-present",
