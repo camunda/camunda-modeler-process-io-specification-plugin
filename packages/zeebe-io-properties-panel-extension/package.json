@@ -1,0 +1,60 @@
+{
+  "name": "zeebe-io-properties-panel-extension",
+  "version": "0.0.0",
+  "description": "bpmn-js-properties-panel extension for Zeebe I/O extensions",
+  "scripts": {
+    "all": "run-s lint test bundle",
+    "lint": "eslint .",
+    "bundle": "rollup -c",
+    "dev": "npm test -- --auto-watch --no-single-run",
+    "test": "karma start karma.config.cjs",
+    "start": "SINGLE_START=true npm run dev"
+  },
+  "type": "module",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": "./dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/camunda/camunda-modeler-process-io-specification-plugin.git",
+    "directory": "packages/camunda-modeler-platform-plugin"
+  },
+  "keywords": [
+    "bpmn",
+    "properties-panel",
+    "zeebe",
+    "io-specification"
+  ],
+  "author": {
+    "name": "Nico Rehwaldt",
+    "url": "https://github.com/nikku"
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "devDependencies": {
+    "@bpmn-io/properties-panel": "^3.40.6",
+    "@testing-library/preact": "^3.2.4",
+    "bpmn-js": "^18.14.0",
+    "bpmn-js-properties-panel": "^5.54.0",
+    "camunda-bpmn-js-behaviors": "^1.14.1",
+    "eslint": "^9.39.4",
+    "eslint-plugin-bpmn-io": "^2.2.0",
+    "karma": "^6.4.4",
+    "karma-chrome-launcher-2": "^3.3.0",
+    "karma-debug-launcher": "^0.0.5",
+    "karma-env-preprocessor": "^0.1.1",
+    "karma-firefox-launcher": "^2.1.3",
+    "karma-mocha": "^2.0.1",
+    "karma-webpack": "^5.0.1",
+    "mocha-test-container-support": "^0.2.0",
+    "puppeteer": "^24.42.0",
+    "rollup": "^4.60.2",
+    "webpack": "^5.106.2",
+    "zeebe-bpmn-moddle": "^1.13.0",
+    "zeebe-io-moddle": "^0.0.0"
+  },
+  "dependencies": {
+    "ids": "^3.0.2"
+  }
+}
