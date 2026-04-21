@@ -12,7 +12,10 @@
     "url": "git+https://github.com/camunda/camunda-modeler-process-io-specification-plugin.git"
   },
   "license": "MIT",
-  "author": "Nico Rehwaldt",
+  "author": {
+    "name": "Nico Rehwaldt",
+    "url": "https://github.com/nikku"
+  },
   "workspaces": [
     "./packages/zeebe-io-moddle",
     "./packages/camunda-modeler-platform-plugin"

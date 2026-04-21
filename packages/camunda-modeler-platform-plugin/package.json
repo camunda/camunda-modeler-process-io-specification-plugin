@@ -18,7 +18,10 @@
     "modeler",
     "plugin"
   ],
-  "author": "Nico Rehwaldt",
+  "author": {
+    "name": "Nico Rehwaldt",
+    "url": "https://github.com/nikku"
+  },
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.29.0",
