@@ -1041,6 +1041,9 @@ function updateItemProperty(element, businessObject, newProperties, modeling) {
   return modeling.updateModdleProperties(element, businessObject, newProperties);
 }
 
+// ensure we load after element templates
+const EVEN_LOWER_PRIORITY = 299;
+
 /**
  * An extension that makes process IO mappings configurable via a new
  * properties tab.
@@ -1050,7 +1053,7 @@ function updateItemProperty(element, businessObject, newProperties, modeling) {
 class ProcessIoExtensionProvider {
   constructor(propertiesPanel, injector) {
     this._injector = injector;
-    propertiesPanel.registerProvider(this);
+    propertiesPanel.registerProvider(EVEN_LOWER_PRIORITY, this);
   }
   getGroups(element) {
     return groups => {
