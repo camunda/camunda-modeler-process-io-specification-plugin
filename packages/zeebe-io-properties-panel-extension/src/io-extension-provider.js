@@ -7,6 +7,8 @@ import {
   canHaveIoSpecification
 } from './process-io-helper.js';
 
+// ensure we load after element templates
+const EVEN_LOWER_PRIORITY = 299;
 
 /**
  * An extension that makes process IO mappings configurable via a new
@@ -18,7 +20,7 @@ export default class ProcessIoExtensionProvider {
   constructor(propertiesPanel, injector) {
     this._injector = injector;
 
-    propertiesPanel.registerProvider(this);
+    propertiesPanel.registerProvider(EVEN_LOWER_PRIORITY, this);
   }
 
   getGroups(element) {
