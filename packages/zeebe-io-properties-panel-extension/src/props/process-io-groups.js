@@ -32,6 +32,7 @@ export function createInputSpecificationGroup(element, injector) {
   const inputSpecificationGroup = {
     id: 'input-specification',
     label: translate('Input specification'),
+    tooltip: translate('Specify input variables that this element consumes.'),
     component: ListGroup,
     add: addInputSpecificationFactory(element, injector),
     items: inputSpecifications.map(function(inputSpecification, index) {
@@ -201,6 +202,7 @@ export function createOutputSpecificationGroup(element, injector) {
   const outputSpecificationGroup = {
     id: 'output-specification',
     label: translate('Output specification'),
+    tooltip: translate('Specify output variables that this element produces.'),
     component: ListGroup,
     add: addOutputSpecificationFactory(element, injector),
     items: outputSpecifications.map(function(outputSpecification, index) {
