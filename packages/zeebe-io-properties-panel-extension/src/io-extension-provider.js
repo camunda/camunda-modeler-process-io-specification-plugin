@@ -29,12 +29,7 @@ export default class ProcessIoExtensionProvider {
         return groups;
       }
 
-      // insert after documentation or general group, or at second position
-      const insertIndex = (
-        groups.findIndex(e => e.id === 'documentation') + 1 ||
-        groups.findIndex(e => e.id === 'general') + 1 ||
-        1
-      );
+      const insertIndex = findInsertIndex(groups);
 
       return [
         ...groups.slice(0, insertIndex),
@@ -46,6 +41,36 @@ export default class ProcessIoExtensionProvider {
   }
 }
 
+function findInsertIndex(groups) {
+
+  let afterGroups = [ 'general', 'documentation', 'general', 'ElementTemplates__Template' ];
+  let beforeGroups = [ 'inputs', 'outputs', 'ElementTemplates__CustomProperties-output' ];
+
+  let insertBefore = null;
+  let insertAfter = 0;
+
+  for (let i = groups.length - 1; i >= 0; i--) {
+
+    const group = groups[i];
+
+    // select last before group in list
+    if (beforeGroups.includes(group.id)) {
+      insertBefore = i;
+    }
+
+    // find first after group in list
+    if (afterGroups.includes(group.id)) {
+      insertAfter = i;
+      break;
+    }
+  }
+
+  if (insertBefore === null) {
+    return insertAfter + 1;
+  }
+
+  return insertBefore;
+}
 
 ProcessIoExtensionProvider.$inject = [
   'propertiesPanel',
