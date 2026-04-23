@@ -620,6 +620,7 @@ function createInputSpecificationGroup(element, injector) {
   const inputSpecificationGroup = {
     id: 'input-specification',
     label: translate('Input specification'),
+    tooltip: translate('Specify input variables that this element consumes.'),
     component: _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_2__.ListGroup,
     add: addInputSpecificationFactory(element, injector),
     items: inputSpecifications.map(function (inputSpecification, index) {
@@ -758,6 +759,7 @@ function createOutputSpecificationGroup(element, injector) {
   const outputSpecificationGroup = {
     id: 'output-specification',
     label: translate('Output specification'),
+    tooltip: translate('Specify output variables that this element produces.'),
     component: _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_2__.ListGroup,
     add: addOutputSpecificationFactory(element, injector),
     items: outputSpecifications.map(function (outputSpecification, index) {
@@ -1060,12 +1062,34 @@ class ProcessIoExtensionProvider {
       if (!canHaveIoSpecification(element)) {
         return groups;
       }
-
-      // insert after documentation or general group, or at second position
-      const insertIndex = groups.findIndex(e => e.id === 'documentation') + 1 || groups.findIndex(e => e.id === 'general') + 1 || 1;
+      const insertIndex = findInsertIndex(groups);
       return [...groups.slice(0, insertIndex), createInputSpecificationGroup(element, this._injector), createOutputSpecificationGroup(element, this._injector), ...groups.slice(insertIndex)];
     };
   }
+}
+function findInsertIndex(groups) {
+  let afterGroups = ['general', 'documentation', 'general', 'ElementTemplates__Template'];
+  let beforeGroups = ['inputs', 'outputs', 'ElementTemplates__CustomProperties-output'];
+  let insertBefore = null;
+  let insertAfter = 0;
+  for (let i = groups.length - 1; i >= 0; i--) {
+    const group = groups[i];
+
+    // select last before group in list
+    if (beforeGroups.includes(group.id)) {
+      insertBefore = i;
+    }
+
+    // find first after group in list
+    if (afterGroups.includes(group.id)) {
+      insertAfter = i;
+      break;
+    }
+  }
+  if (insertBefore === null) {
+    return insertAfter + 1;
+  }
+  return insertBefore;
 }
 ProcessIoExtensionProvider.$inject = ['propertiesPanel', 'injector'];
 var index = {
