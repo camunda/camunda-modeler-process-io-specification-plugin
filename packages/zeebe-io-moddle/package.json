@@ -1,0 +1,49 @@
+{
+  "name": "zeebe-io-moddle",
+  "version": "0.0.0",
+  "description": "Zeebe I/O extensions for BPMN 2.0",
+  "scripts": {
+    "all": "run-s lint test",
+    "lint": "eslint .",
+    "dev": "npm test -- --watch",
+    "test": "mocha --reporter=spec --recursive test"
+  },
+  "type": "module",
+  "exports": {
+    "./package.json": "./package.json",
+    "./resources/*": "./resources/*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/camunda/camunda-modeler-process-io-specification-plugin.git",
+    "directory": "packages/zeebe-io-moddle"
+  },
+  "keywords": [
+    "bpmn",
+    "moddle",
+    "bpmn20",
+    "zeebe",
+    "io-specification"
+  ],
+  "author": {
+    "name": "Nico Rehwaldt",
+    "url": "https://github.com/nikku"
+  },
+  "contributors": [
+    {
+      "name": "bpmn.io contributors",
+      "url": "https://github.com/bpmn-io"
+    }
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "bpmn-moddle": "^10.0.0",
+    "chai": "^6.2.2",
+    "eslint": "^9.39.4",
+    "eslint-plugin-bpmn-io": "^2.2.0",
+    "mocha": "^11.7.5"
+  },
+  "files": [
+    "resources"
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "name": "camunda-modeler-process-io-specification-plugin",
+  "version": "0.4.0",
+  "description": "Document BPMN process inputs and outputs using the Camunda Modeler",
+  "main": "index.js",
+  "scripts": {
+    "all": "run-s bundle",
+    "bundle": "webpack",
+    "bundle:watch": "webpack --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/camunda/camunda-modeler-process-io-specification-plugin.git",
+    "directory": "packages/camunda-modeler-platform-plugin"
+  },
+  "keywords": [
+    "camunda",
+    "modeler",
+    "plugin"
+  ],
+  "author": {
+    "name": "Nico Rehwaldt",
+    "url": "https://github.com/nikku"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "camunda-modeler-plugin-helpers": "^6.0.0",
+    "camunda-modeler-webpack-plugin": "^0.2.0",
+    "webpack": "^5.106.2",
+    "webpack-cli": "^7.0.2"
+  },
+  "dependencies": {
+    "bpmn-js": "^18.14.0",
+    "diagram-js": "^15.12.0",
+    "ids": "^3.0.2",
+    "inherits-browser": "^0.1.0"
+  }
+}

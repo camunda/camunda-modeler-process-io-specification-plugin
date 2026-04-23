@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ccon="http://ccon.camunda.io" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Web Modeler" exporterVersion="ff9e015" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.9.0">
+  <bpmn:process id="money_withdrawal_" name="Money withdrawal" isExecutable="true">
+    <bpmn:documentation>When the process is completed successfully, the money can be picked up at the treasury office by the account user.</bpmn:documentation>
+    <bpmn:extensionElements>
+      <zeebe:versionTag value="1.35" />
+    </bpmn:extensionElements>
+    <bpmn:sequenceFlow id="Flow_02js93g" sourceRef="Activity_16hfey6" targetRef="Activity_1vyvs61" />
+    <bpmn:sequenceFlow id="Flow_05fs7at" sourceRef="Gateway_1t1aeqq" targetRef="Activity_16hfey6" />
+    <bpmn:sequenceFlow id="Flow_0jd00wr" sourceRef="Activity_1vyvs61" targetRef="Event_16qffma" />
+    <bpmn:sequenceFlow id="Flow_0mu8nqe" sourceRef="start_from_slack" targetRef="Gateway_1t1aeqq" />
+    <bpmn:sequenceFlow id="Flow_0yfx203" sourceRef="start_via_agent" targetRef="Gateway_1t1aeqq" />
+    <bpmn:sequenceFlow id="Flow_1rgwbox" sourceRef="start_with_form" targetRef="Gateway_1t1aeqq" />
+    <bpmn:exclusiveGateway id="Gateway_1t1aeqq">
+      <bpmn:incoming>Flow_0mu8nqe</bpmn:incoming>
+      <bpmn:incoming>Flow_0yfx203</bpmn:incoming>
+      <bpmn:incoming>Flow_1rgwbox</bpmn:incoming>
+      <bpmn:outgoing>Flow_05fs7at</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="Activity_16hfey6" name="Lookup IBAN">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+        <zeebe:formDefinition formId="test-1t1nx7q" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_05fs7at</bpmn:incoming>
+      <bpmn:outgoing>Flow_02js93g</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Event_16qffma" name="Money withdrawn">
+      <bpmn:incoming>Flow_0jd00wr</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:startEvent id="start_via_agent" name="Start via agent" zeebe:modelerTemplate="io.camunda.mcp.start" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAQAAADZc7J/AAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElNRQfqAwsPJB1yGKXXAAABqklEQVRIx6XVvWsUURTG4SfZuDGkUBC7oI1FIIVYJI2KoBILLQQLBbEQUcQijRAM2OQP8AOUhAhiUiQIWoigYkoLCwUrK4UI8QPFVYmFhnWzx2In2VUym53JW92Ze3/n3PPeM3cK1lKnfr34IYcKLlsQQnhhICte9EAI382pCIsOZMMfCmXnFdBjVvikOyt+dOVNtw/Cqex4h2kL+jAmXM+O3xP+2IUbwrR9trWOF8wIFSfR5VtyHuG5/qx40Tsh/DJvSfhtMA8+qRPbzQolm1c/99XwOSHcWlnZ5a0wlI4vW3f8P7zdmJKdGBVmsuO3hao9GBbuZ9t8m3Gh6gJ4JozWA9xp6Lqphuw16yYasp8DI0LZjnqAxxYT/Jiw5ERTfFgII40ObLAlGT0VrqXUXsMvCuFqWiN9EXbjVdPsV9Ib+bOwFx/z4TwSxrFJXx6cw0LVJUVsdbf12uu6KYSf3igLFWez4bQZ8jX5bF87mBWvqcOAQ3qTp8z4v1onfroV55vpfdKZqWpf84JlvvnPq7k22m9Qycu8JSzfAmfyu1AL8YT1hDiiJ23yLxup/hFQZlOcAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDI2LTAzLTExVDE1OjM2OjI5KzAwOjAwN5TmhAAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyNi0wMy0xMVQxNTozNjoyOSswMDowMEbJXjgAAAAASUVORK5CYII=">
+      <bpmn:extensionElements>
+        <zeebe:properties>
+          <zeebe:property name="io.camunda.tool:name" value="money_withdrawal" />
+          <zeebe:property name="io.camunda.tool:purpose" value="Withdraw a specific amount of money for a user." />
+          <zeebe:property name="io.camunda.tool:when_to_use" value="A user wants to have the treasury office withdraw money from their account, so they can pick it up." />
+          <zeebe:property name="io.camunda.tool:when_not_to_use" value="A user wants to add money to their account. Use the &#39;money_deposit&#39; tool for that." />
+          <zeebe:property name="io.camunda.tool:results" value="When the process is completed successfully, the money can be picked up at the treasury office by the account user. They need to bring valid identification.&#10; &#10;When the process is completed, you can find the IBAN number of the account the money was taken from in the &#39;iban&#39; variable. This can be used by the account user to double-check the money was withdrawn from the correct account." />
+        </zeebe:properties>
+        <zeebe:ioMapping>
+          <zeebe:output source="=firstName + &#34; &#34; + lastName" target="userName" />
+          <zeebe:output source="=amount" target="amount" />
+        </zeebe:ioMapping>
+        <ccon:ioSpecification>
+          <ccon:inputSpecification name="firstName" description="The first name of the user to withdraw money for" type="string" required="true" schema="" />
+          <ccon:inputSpecification name="lastName" description="The last name of the user to withdraw money for" type="string" required="true" schema="" />
+          <ccon:inputSpecification name="amount" description="The amount of money to withdraw" type="int32" required="true" schema="" />
+        </ccon:ioSpecification>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_0yfx203</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0jzrny4" messageRef="Message_18nr92y" />
+    </bpmn:startEvent>
+    <bpmn:userTask id="Activity_1vyvs61" name="Withdraw money for user">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+        <zeebe:formDefinition formId="Form_kchqurn" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_02js93g</bpmn:incoming>
+      <bpmn:outgoing>Flow_0jd00wr</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:startEvent id="start_from_slack" name="Start from Slack" zeebe:modelerTemplate="io.camunda.connectors.inbound.Slack.MessageStartEvent.v1" zeebe:modelerTemplateVersion="7" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI3IiBoZWlnaHQ9IjEyNyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cGF0aCBkPSJNMjcuMiA4MGMwIDcuMy01LjkgMTMuMi0xMy4yIDEzLjJDNi43IDkzLjIuOCA4Ny4zLjggODBjMC03LjMgNS45LTEzLjIgMTMuMi0xMy4yaDEzLjJWODB6bTYuNiAwYzAtNy4zIDUuOS0xMy4yIDEzLjItMTMuMiA3LjMgMCAxMy4yIDUuOSAxMy4yIDEzLjJ2MzNjMCA3LjMtNS45IDEzLjItMTMuMiAxMy4yLTcuMyAwLTEzLjItNS45LTEzLjItMTMuMlY4MHoiIGZpbGw9IiNFMDFFNUEiLz4KICA8cGF0aCBkPSJNNDcgMjdjLTcuMyAwLTEzLjItNS45LTEzLjItMTMuMkMzMy44IDYuNSAzOS43LjYgNDcgLjZjNy4zIDAgMTMuMiA1LjkgMTMuMiAxMy4yVjI3SDQ3em0wIDYuN2M3LjMgMCAxMy4yIDUuOSAxMy4yIDEzLjIgMCA3LjMtNS45IDEzLjItMTMuMiAxMy4ySDEzLjlDNi42IDYwLjEuNyA1NC4yLjcgNDYuOWMwLTcuMyA1LjktMTMuMiAxMy4yLTEzLjJINDd6IiBmaWxsPSIjMzZDNUYwIi8+CiAgPHBhdGggZD0iTTk5LjkgNDYuOWMwLTcuMyA1LjktMTMuMiAxMy4yLTEzLjIgNy4zIDAgMTMuMiA1LjkgMTMuMiAxMy4yIDAgNy4zLTUuOSAxMy4yLTEzLjIgMTMuMkg5OS45VjQ2Ljl6bS02LjYgMGMwIDcuMy01LjkgMTMuMi0xMy4yIDEzLjItNy4zIDAtMTMuMi01LjktMTMuMi0xMy4yVjEzLjhDNjYuOSA2LjUgNzIuOC42IDgwLjEuNmM3LjMgMCAxMy4yIDUuOSAxMy4yIDEzLjJ2MzMuMXoiIGZpbGw9IiMyRUI2N0QiLz4KICA8cGF0aCBkPSJNODAuMSA5OS44YzcuMyAwIDEzLjIgNS45IDEzLjIgMTMuMiAwIDcuMy01LjkgMTMuMi0xMy4yIDEzLjItNy4zIDAtMTMuMi01LjktMTMuMi0xMy4yVjk5LjhoMTMuMnptMC02LjZjLTcuMyAwLTEzLjItNS45LTEzLjItMTMuMiAwLTcuMyA1LjktMTMuMiAxMy4yLTEzLjJoMzMuMWM3LjMgMCAxMy4yIDUuOSAxMy4yIDEzLjIgMCA3LjMtNS45IDEzLjItMTMuMiAxMy4ySDgwLjF6IiBmaWxsPSIjRUNCMjJFIi8+Cjwvc3ZnPgo=">
+      <bpmn:extensionElements>
+        <zeebe:properties>
+          <zeebe:property name="inbound.type" value="io.camunda:slack-webhook:1" />
+          <zeebe:property name="inbound.context" value="9b63973d-71dd-4afd-bd6d-e845597e3be5" />
+          <zeebe:property name="inbound.slackSigningSecret" value="{{secrets.SLACK_KEY}}" />
+          <zeebe:property name="inbound.verificationExpression" value="=if (body.type != null and body.type = &#34;url_verification&#34;) then {body:{&#34;challenge&#34;:body.challenge}, statusCode: 200} else null" />
+          <zeebe:property name="consumeUnmatchedEvents" value="true" />
+          <zeebe:property name="correlationRequired" value="notRequired" />
+          <zeebe:property name="deduplicationModeManualFlag" value="false" />
+          <zeebe:property name="deduplicationMode" value="AUTO" />
+          <zeebe:property name="resultVariable" />
+          <zeebe:property name="resultExpression" value="={&#10;  userName: request.body.userName,&#10;  amount: number(request.body.chat.message.text)&#10;}" />
+        </zeebe:properties>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_0mu8nqe</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_12kp1lo" messageRef="Message_0ojl0ei" />
+    </bpmn:startEvent>
+    <bpmn:startEvent id="start_with_form" name="Start with form">
+      <bpmn:extensionElements>
+        <zeebe:formDefinition formId="do-things-05pggh2" />
+        <zeebe:ioMapping>
+          <zeebe:output source="=firstName + &#34; &#34; + lastName" target="userName" />
+          <zeebe:output source="=amount" target="amount" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_1rgwbox</bpmn:outgoing>
+    </bpmn:startEvent>
+  </bpmn:process>
+  <bpmn:message id="Message_18nr92y" name="dd58f9b0-647e-4902-a9d3-c87c3fc34b32" zeebe:modelerTemplate="io.camunda.mcp.start" />
+  <bpmn:message id="Message_0vbvs85" name="e149b8ab-ab8f-414b-8bdd-7baf10eeee0e" />
+  <bpmn:message id="Message_1qzzxl4" name="9450bcd6-1eea-4deb-8963-b8f09d477d46" />
+  <bpmn:message id="Message_1rzkg4e" name="550f5e62-da34-4636-b15c-35c18975fd46" />
+  <bpmn:message id="Message_0ojl0ei" name="b757b439-1b1b-42ad-bd90-1c69f3fab1dd" zeebe:modelerTemplate="io.camunda.connectors.inbound.Slack.MessageStartEvent.v1" />
+  <bpmn:message id="Message_0i8r2y6" name="6c3813ac-a05e-4daa-9403-d69e65f021c3" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="money_withdrawal_">
+      <bpmndi:BPMNShape id="Gateway_1t1aeqq_di" bpmnElement="Gateway_1t1aeqq" isMarkerVisible="true">
+        <dc:Bounds x="235" y="93" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0zcxotz_di" bpmnElement="Activity_16hfey6">
+        <dc:Bounds x="320" y="78" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_16qffma_di" bpmnElement="Event_16qffma">
+        <dc:Bounds x="612" y="100" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="587" y="143" width="86" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_03fiim2_di" bpmnElement="start_via_agent">
+        <dc:Bounds x="150" y="12" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="133" y="55" width="71" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0hai7n1_di" bpmnElement="Activity_1vyvs61">
+        <dc:Bounds x="460" y="78" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_043tejf_di" bpmnElement="start_from_slack">
+        <dc:Bounds x="150" y="100" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="129" y="143" width="79" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1xfzy8w_di" bpmnElement="start_with_form">
+        <dc:Bounds x="150" y="202" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="133" y="245" width="71" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_02js93g_di" bpmnElement="Flow_02js93g">
+        <di:waypoint x="420" y="118" />
+        <di:waypoint x="460" y="118" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05fs7at_di" bpmnElement="Flow_05fs7at">
+        <di:waypoint x="285" y="118" />
+        <di:waypoint x="320" y="118" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0jd00wr_di" bpmnElement="Flow_0jd00wr">
+        <di:waypoint x="560" y="118" />
+        <di:waypoint x="612" y="118" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0mu8nqe_di" bpmnElement="Flow_0mu8nqe">
+        <di:waypoint x="186" y="118" />
+        <di:waypoint x="235" y="118" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0yfx203_di" bpmnElement="Flow_0yfx203">
+        <di:waypoint x="186" y="30" />
+        <di:waypoint x="260" y="30" />
+        <di:waypoint x="260" y="93" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1rgwbox_di" bpmnElement="Flow_1rgwbox">
+        <di:waypoint x="186" y="220" />
+        <di:waypoint x="260" y="220" />
+        <di:waypoint x="260" y="143" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

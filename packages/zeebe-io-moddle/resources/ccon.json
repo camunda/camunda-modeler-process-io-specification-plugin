@@ -1,0 +1,92 @@
+{
+  "name": "ccon",
+  "prefix": "ccon",
+  "uri": "http://ccon.camunda.io",
+  "xml": {
+    "tagAlias": "lowerCase"
+  },
+  "associations": [],
+  "types": [
+    {
+      "name": "IoSpecification",
+      "superClass": [
+        "Element"
+      ],
+      "properties": [
+        {
+          "name": "inputs",
+          "isMany": true,
+          "type": "InputSpecification"
+        },
+        {
+          "name": "outputs",
+          "isMany": true,
+          "type": "OutputSpecfication"
+        }
+      ],
+      "meta": {
+        "allowedIn": [
+          "bpmn:Process",
+          "bpmn:Activity",
+          "bpmn:Event"
+        ]
+      }
+    },
+    {
+      "name": "InputSpecification",
+      "properties": [
+        {
+          "name": "name",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "description",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "type",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "required",
+          "isAttr": true,
+          "type": "Boolean",
+          "default": true
+        },
+        {
+          "name": "schema",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "OutputSpecification",
+      "properties": [
+        {
+          "name": "name",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "description",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "type",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "schema",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    }
+  ]
+}

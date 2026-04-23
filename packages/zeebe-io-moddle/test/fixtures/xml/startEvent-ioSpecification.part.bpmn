@@ -1,0 +1,11 @@
+<bpmn:startEvent id="start_via_agent"
+  xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:ccon="http://ccon.camunda.io">
+  <bpmn:extensionElements>
+    <ccon:ioSpecification>
+      <ccon:inputSpecification name="firstName" description="The first name" type="string" required="false" schema="" />
+      <ccon:inputSpecification name="lastName" description="The last name of the user to withdraw money for" type="string" required="true" schema="" />
+      <ccon:inputSpecification name="amount" description="The amount to withdraw" type="integer" required="true" schema="" />
+    </ccon:ioSpecification>
+  </bpmn:extensionElements>
+</bpmn:startEvent>

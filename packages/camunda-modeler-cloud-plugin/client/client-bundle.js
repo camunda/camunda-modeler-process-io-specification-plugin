@@ -1,505 +1,11 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./client/properties-panel/extensions-helper.js":
-/*!******************************************************!*\
-  !*** ./client/properties-panel/extensions-helper.js ***!
-  \******************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   createCamundaProperties: () => (/* binding */ createCamundaProperties),
-/* harmony export */   createElement: () => (/* binding */ createElement),
-/* harmony export */   createExtensionElements: () => (/* binding */ createExtensionElements),
-/* harmony export */   findExtensions: () => (/* binding */ findExtensions),
-/* harmony export */   getCamundaProperties: () => (/* binding */ getCamundaProperties),
-/* harmony export */   getExtensionElements: () => (/* binding */ getExtensionElements)
-/* harmony export */ });
-/* harmony import */ var bpmn_js_lib_features_modeling_util_ModelingUtil__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
-
-
-function findExtensions(element, types) {
-  const extensionElements = getExtensionElements(element);
-  if (!extensionElements) {
-    return [];
-  }
-  return extensionElements.get('values').filter(value => {
-    return (0,bpmn_js_lib_features_modeling_util_ModelingUtil__WEBPACK_IMPORTED_MODULE_0__.isAny)(value, [].concat(types));
-  });
-}
-function getExtensionElements(element) {
-  const businessObject = (0,bpmn_js_lib_features_modeling_util_ModelingUtil__WEBPACK_IMPORTED_MODULE_0__.getBusinessObject)(element);
-  return businessObject.get('extensionElements');
-}
-function getCamundaProperties(element) {
-  const bo = (0,bpmn_js_lib_features_modeling_util_ModelingUtil__WEBPACK_IMPORTED_MODULE_0__.getBusinessObject)(element);
-  const properties = findExtensions(bo, 'camunda:Properties') || [];
-  if (properties.length) {
-    return properties[0];
-  }
-  return null;
-}
-function createExtensionElements(element, bpmnFactory) {
-  const bo = (0,bpmn_js_lib_features_modeling_util_ModelingUtil__WEBPACK_IMPORTED_MODULE_0__.getBusinessObject)(element);
-  return createElement('bpmn:ExtensionElements', {
-    values: []
-  }, bo, bpmnFactory);
-}
-function createCamundaProperties(extensionElements, bpmnFactory, properties) {
-  return createElement('camunda:Properties', properties, extensionElements, bpmnFactory);
-}
-function createElement(elementType, properties, parent, factory) {
-  const element = factory.create(elementType, properties);
-  element.$parent = parent;
-  return element;
-}
-
-/***/ }),
-
-/***/ "./client/properties-panel/index.js":
-/*!******************************************!*\
-  !*** ./client/properties-panel/index.js ***!
-  \******************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _process_io_extension_provider__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./process-io-extension-provider */ "./client/properties-panel/process-io-extension-provider.js");
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  __init__: ['processIoExtensionProvider'],
-  processIoExtensionProvider: ['type', _process_io_extension_provider__WEBPACK_IMPORTED_MODULE_0__["default"]]
-});
-
-/***/ }),
-
-/***/ "./client/properties-panel/process-io-extension-provider.js":
-/*!******************************************************************!*\
-  !*** ./client/properties-panel/process-io-extension-provider.js ***!
-  \******************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ ProcessIoExtensionProvider)
-/* harmony export */ });
-/* harmony import */ var bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
-/* harmony import */ var _props_process_io_groups__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./props/process-io-groups */ "./client/properties-panel/props/process-io-groups.js");
-
-
-
-/**
- * An extension that makes process IO mappings configurable via a new
- * properties tab.
- *
- * @param {didi.Injector} injector
- */
-class ProcessIoExtensionProvider {
-  constructor(propertiesPanel, injector) {
-    this._injector = injector;
-    propertiesPanel.registerProvider(this);
-  }
-  getGroups(element) {
-    return groups => {
-      if (!(0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(element, 'bpmn:Process') || (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.is)(element, 'bpmn:Participant') && !getProcessRef(element)) {
-        return groups;
-      }
-      groups = groups.slice();
-      groups.splice(1, 0, (0,_props_process_io_groups__WEBPACK_IMPORTED_MODULE_0__.createInputSpecificationGroup)(element, this._injector), (0,_props_process_io_groups__WEBPACK_IMPORTED_MODULE_0__.createOutputSpecificationGroup)(element, this._injector));
-      return groups;
-    };
-  }
-}
-ProcessIoExtensionProvider.$inject = ['propertiesPanel', 'injector'];
-function getProcessRef(element) {
-  const bo = (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_1__.getBusinessObject)(element);
-  return bo.processRef;
-}
-
-/***/ }),
-
-/***/ "./client/properties-panel/process-io-helper.js":
-/*!******************************************************!*\
-  !*** ./client/properties-panel/process-io-helper.js ***!
-  \******************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   createIoProperty: () => (/* binding */ createIoProperty),
-/* harmony export */   getIoPropertyProps: () => (/* binding */ getIoPropertyProps),
-/* harmony export */   isIoProperty: () => (/* binding */ isIoProperty),
-/* harmony export */   parseIoProperty: () => (/* binding */ parseIoProperty),
-/* harmony export */   parseIoPropertyValue: () => (/* binding */ parseIoPropertyValue),
-/* harmony export */   updateIoProperty: () => (/* binding */ updateIoProperty)
-/* harmony export */ });
-/**
- * Check whether camunda:property is a input or output property.
- *
- * @param {ModdleElement} prop
- *
- * @return {boolean}
- */
-function isIoProperty(prop) {
-  const {
-    name
-  } = prop;
-  return /^(input|output):/.test(name);
-}
-function parseIoPropertyValue(value) {
-  try {
-    return JSON.parse(value);
-  } catch (e) {
-    return {};
-  }
-}
-
-/**
- * Parse <camunda:property name="{input|output}:$variableName" value="$type;$description" />.
- *
- * @param {ModdleElement} prop
- *
- * @return {Object}
- */
-function parseIoProperty(prop) {
-  const [_0, type, name] = /^(input|output):(.*)/.exec(prop.name);
-  const [_1, dataType, description] = /^([^;]+);(.*)/s.exec(prop.value);
-  return {
-    name,
-    type,
-    dataType,
-    description
-  };
-}
-function getIoPropertyProps(options) {
-  var {
-    name,
-    type,
-    dataType,
-    description
-  } = options;
-  var propertyName = `${type}:${name}`;
-  var propertyValue = `${dataType};${description}`;
-  return {
-    name: propertyName,
-    value: propertyValue
-  };
-}
-function createIoProperty(factory, options) {
-  return factory.create('camunda:Property', getIoPropertyProps(options));
-}
-
-/**
- * Craft the UPDATE command to set a property value.
- */
-function updateIoProperty(element, property, newProps, modeling) {
-  const currentProps = parseIoProperty(property);
-  const props = getIoPropertyProps({
-    ...currentProps,
-    ...newProps
-  });
-  return modeling.updateModdleProperties(element, property, props);
-}
-
-/***/ }),
-
-/***/ "./client/properties-panel/props/process-io-groups.js":
-/*!************************************************************!*\
-  !*** ./client/properties-panel/props/process-io-groups.js ***!
-  \************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   createInputSpecificationGroup: () => (/* binding */ createInputSpecificationGroup),
-/* harmony export */   createOutputSpecificationGroup: () => (/* binding */ createOutputSpecificationGroup)
-/* harmony export */ });
-/* harmony import */ var bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! bpmn-js-properties-panel */ "./node_modules/camunda-modeler-plugin-helpers/vendor/bpmn-js-properties-panel.js");
-/* harmony import */ var bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil */ "./node_modules/bpmn-js/lib/util/ModelUtil.js");
-/* harmony import */ var _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @bpmn-io/properties-panel */ "./node_modules/camunda-modeler-plugin-helpers/vendor/@bpmn-io/properties-panel/index.js");
-/* harmony import */ var _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _process_io_helper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../process-io-helper */ "./client/properties-panel/process-io-helper.js");
-/* harmony import */ var _extensions_helper__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../extensions-helper */ "./client/properties-panel/extensions-helper.js");
-/* harmony import */ var ids__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ids */ "./node_modules/ids/dist/index.esm.js");
-
-
-
-
-
-
-
-const ids = new ids__WEBPACK_IMPORTED_MODULE_4__["default"]([16, 36, 1]);
-function createInputSpecificationGroup(element, injector) {
-  const translate = injector.get('translate');
-  const processBo = getProcessBo(element);
-  const properties = getIOSpecificationProperties('input', processBo);
-  const inputSpecificationGroup = {
-    id: 'input-specification-group',
-    label: translate('Input specification'),
-    component: _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_1__.ListGroup,
-    add: addPropertyFactory('input', element, injector),
-    items: properties.map(function (property, index) {
-      const id = `${element.id}-input-specification-${index}`;
-      return PropertyItem({
-        id,
-        element,
-        property,
-        injector
-      });
-    })
-  };
-  return inputSpecificationGroup;
-}
-function createOutputSpecificationGroup(element, injector) {
-  const translate = injector.get('translate');
-  const processBo = getProcessBo(element);
-  const properties = getIOSpecificationProperties('output', processBo);
-  const outputSpecificationGroup = {
-    id: 'output-specification-group',
-    label: translate('Output specification'),
-    component: _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_1__.ListGroup,
-    add: addPropertyFactory('output', element, injector),
-    items: properties.map(function (property, index) {
-      const id = `${element.id}-output-specification-${index}`;
-      return PropertyItem({
-        id,
-        element,
-        property,
-        injector
-      });
-    })
-  };
-  return outputSpecificationGroup;
-}
-function addPropertyFactory(propertyType, element, injector) {
-  const bpmnFactory = injector.get('bpmnFactory'),
-    modeling = injector.get('modeling');
-  function add(event) {
-    event.stopPropagation();
-    const property = (0,_process_io_helper__WEBPACK_IMPORTED_MODULE_2__.createIoProperty)(bpmnFactory, {
-      type: propertyType,
-      name: `var_${ids.next()}`,
-      dataType: 'String',
-      description: ''
-    });
-    const businessObject = (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_5__.getBusinessObject)(element);
-    const extensionElements = (0,_extensions_helper__WEBPACK_IMPORTED_MODULE_3__.getExtensionElements)(element),
-      camundaProperties = (0,_extensions_helper__WEBPACK_IMPORTED_MODULE_3__.getCamundaProperties)(businessObject);
-    let updatedBusinessObject, update;
-    if (!extensionElements) {
-      updatedBusinessObject = businessObject;
-      const extensionElements = (0,_extensions_helper__WEBPACK_IMPORTED_MODULE_3__.createExtensionElements)(businessObject, bpmnFactory),
-        camundaProperties = (0,_extensions_helper__WEBPACK_IMPORTED_MODULE_3__.createCamundaProperties)(extensionElements, bpmnFactory, {
-          values: [property]
-        });
-      extensionElements.values.push(camundaProperties);
-      property.$parent = camundaProperties;
-      update = {
-        extensionElements
-      };
-    } else if (!camundaProperties) {
-      updatedBusinessObject = extensionElements;
-      const camundaProperties = (0,_extensions_helper__WEBPACK_IMPORTED_MODULE_3__.createCamundaProperties)(extensionElements, bpmnFactory, {
-        values: [property]
-      });
-      property.$parent = camundaProperties;
-      update = {
-        values: extensionElements.get('values').concat(camundaProperties)
-      };
-    } else {
-      updatedBusinessObject = camundaProperties;
-      property.$parent = camundaProperties;
-      update = {
-        values: camundaProperties.get('values').concat(property)
-      };
-    }
-    modeling.updateModdleProperties(element, updatedBusinessObject, update);
-  }
-  return add;
-}
-function removeFactory(element, property, modeling) {
-  return function (event) {
-    event.stopPropagation();
-    const businessObject = (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_5__.getBusinessObject)(element);
-    const camundaProperties = (0,_extensions_helper__WEBPACK_IMPORTED_MODULE_3__.getCamundaProperties)(businessObject);
-    modeling.updateModdleProperties(element, camundaProperties, {
-      values: camundaProperties.get('values').filter(value => value !== property)
-    });
-  };
-}
-function PropertyItem(props) {
-  const {
-    id,
-    element,
-    property,
-    injector
-  } = props;
-  const parsed = (0,_process_io_helper__WEBPACK_IMPORTED_MODULE_2__.parseIoProperty)(property);
-  return {
-    id,
-    label: `${parsed.name || ''} : ${parsed.dataType}`,
-    entries: [{
-      id: `${id}-name`,
-      component: Name,
-      property,
-      element
-    }, {
-      id: `${id}-type`,
-      component: Type,
-      property,
-      element
-    }, {
-      id: `${id}-description`,
-      component: Description,
-      property,
-      element
-    }],
-    autoFocusEntry: id + '-name',
-    remove: removeFactory(element, property, injector.get('modeling'))
-  };
-}
-function Name(props) {
-  const {
-    id,
-    element,
-    property
-  } = props;
-  const modeling = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__.useService)('modeling');
-  const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__.useService)('translate');
-  const debounce = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__.useService)('debounceInput');
-  const setValue = value => {
-    (0,_process_io_helper__WEBPACK_IMPORTED_MODULE_2__.updateIoProperty)(element, property, {
-      name: value || ''
-    }, modeling);
-  };
-  const getValue = () => {
-    return (0,_process_io_helper__WEBPACK_IMPORTED_MODULE_2__.parseIoProperty)(property).name || '';
-  };
-
-  // return error if contains spaces
-  const validate = value => {
-    if (!value) {
-      return translate('Parameter must have a name.');
-    }
-    if (/\s/.test(value)) {
-      return translate('Name must not contain spaces.');
-    }
-  };
-  return (0,_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_1__.TextFieldEntry)({
-    element: property,
-    id,
-    label: translate('Name'),
-    getValue,
-    setValue,
-    debounce,
-    validate
-  });
-}
-function Type(props) {
-  const {
-    id,
-    element,
-    property
-  } = props;
-  const modeling = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__.useService)('modeling');
-  const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__.useService)('translate');
-  const setValue = value => {
-    (0,_process_io_helper__WEBPACK_IMPORTED_MODULE_2__.updateIoProperty)(element, property, {
-      dataType: value
-    }, modeling);
-  };
-  const getValue = () => {
-    return (0,_process_io_helper__WEBPACK_IMPORTED_MODULE_2__.parseIoProperty)(property).dataType || 'String';
-  };
-  return (0,_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_1__.SelectEntry)({
-    element: property,
-    id,
-    label: translate('Type'),
-    getOptions() {
-      return [{
-        value: 'String',
-        label: translate('String')
-      }, {
-        value: 'int',
-        label: translate('int')
-      }, {
-        value: 'boolean',
-        label: translate('boolean')
-      }, {
-        value: 'double',
-        label: translate('double')
-      }, {
-        value: 'Date',
-        label: translate('Date')
-      }];
-    },
-    getValue,
-    setValue
-  });
-}
-function Description(props) {
-  const {
-    id,
-    element,
-    property
-  } = props;
-  const modeling = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__.useService)('modeling');
-  const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__.useService)('translate');
-  const debounce = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__.useService)('debounceInput');
-  const setValue = value => {
-    (0,_process_io_helper__WEBPACK_IMPORTED_MODULE_2__.updateIoProperty)(element, property, {
-      description: value || ''
-    }, modeling);
-  };
-  const getValue = () => {
-    return (0,_process_io_helper__WEBPACK_IMPORTED_MODULE_2__.parseIoProperty)(property).description || '';
-  };
-  return (0,_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_1__.TextAreaEntry)({
-    element: property,
-    id,
-    label: translate('Description'),
-    getValue,
-    setValue,
-    debounce
-  });
-}
-
-// helper
-
-/**
- * Get process business object from process element or participant.
- */
-function getProcessBo(element) {
-  const bo = (0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_5__.getBusinessObject)(element);
-  if ((0,bpmn_js_lib_util_ModelUtil__WEBPACK_IMPORTED_MODULE_5__.is)(element, 'bpmn:Participant')) {
-    bo = bo.processRef;
-  }
-  return bo;
-}
-function getIOSpecificationProperties(type, processBo) {
-  const camundaProperties = (0,_extensions_helper__WEBPACK_IMPORTED_MODULE_3__.getCamundaProperties)(processBo);
-  if (!camundaProperties) {
-    return [];
-  }
-  return camundaProperties.get('values').filter(property => (0,_process_io_helper__WEBPACK_IMPORTED_MODULE_2__.isIoProperty)(property)).filter(property => (0,_process_io_helper__WEBPACK_IMPORTED_MODULE_2__.parseIoProperty)(property).type === type);
-}
-
-/***/ }),
-
-/***/ "./node_modules/bpmn-js/lib/util/ModelUtil.js":
-/*!****************************************************!*\
-  !*** ./node_modules/bpmn-js/lib/util/ModelUtil.js ***!
-  \****************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ "../../node_modules/bpmn-js/lib/util/ModelUtil.js"
+/*!********************************************************!*\
+  !*** ../../node_modules/bpmn-js/lib/util/ModelUtil.js ***!
+  \********************************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
@@ -509,7 +15,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   is: () => (/* binding */ is),
 /* harmony export */   isAny: () => (/* binding */ isAny)
 /* harmony export */ });
-/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "./node_modules/min-dash/dist/index.esm.js");
+/* harmony import */ var min_dash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! min-dash */ "../../node_modules/min-dash/dist/index.js");
 
 
 /**
@@ -568,15 +74,15 @@ function getDi(element) {
   return element && element.di;
 }
 
-/***/ }),
+/***/ },
 
-/***/ "./node_modules/camunda-modeler-plugin-helpers/helper.js":
-/*!***************************************************************!*\
-  !*** ./node_modules/camunda-modeler-plugin-helpers/helper.js ***!
-  \***************************************************************/
-/***/ ((module) => {
+/***/ "../../node_modules/camunda-modeler-plugin-helpers/helper.js"
+/*!*******************************************************************!*\
+  !*** ../../node_modules/camunda-modeler-plugin-helpers/helper.js ***!
+  \*******************************************************************/
+(module) {
 
-module.exports.returnOrThrow = function(getter, minimalModelerVersion) {
+function returnOrThrow(getter, minimalModelerVersion) {
   let result;
   try {
     result = getter();
@@ -589,14 +95,18 @@ module.exports.returnOrThrow = function(getter, minimalModelerVersion) {
   return result;
 }
 
+module.exports = {
+  returnOrThrow
+};
 
-/***/ }),
 
-/***/ "./node_modules/camunda-modeler-plugin-helpers/index.js":
-/*!**************************************************************!*\
-  !*** ./node_modules/camunda-modeler-plugin-helpers/index.js ***!
-  \**************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ },
+
+/***/ "../../node_modules/camunda-modeler-plugin-helpers/index.js"
+/*!******************************************************************!*\
+  !*** ../../node_modules/camunda-modeler-plugin-helpers/index.js ***!
+  \******************************************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
@@ -973,127 +483,732 @@ function getPluginsDirectory() {
   return window.getPluginsDirectory();
 }
 
-/***/ }),
+/***/ },
 
-/***/ "./node_modules/camunda-modeler-plugin-helpers/vendor/@bpmn-io/properties-panel/index.js":
-/*!***********************************************************************************************!*\
-  !*** ./node_modules/camunda-modeler-plugin-helpers/vendor/@bpmn-io/properties-panel/index.js ***!
-  \***********************************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+/***/ "../../node_modules/camunda-modeler-plugin-helpers/vendor/@bpmn-io/properties-panel/index.js"
+/*!***************************************************************************************************!*\
+  !*** ../../node_modules/camunda-modeler-plugin-helpers/vendor/@bpmn-io/properties-panel/index.js ***!
+  \***************************************************************************************************/
+(module, __unused_webpack_exports, __webpack_require__) {
 
-const { returnOrThrow } = __webpack_require__(/*! ../../../helper */ "./node_modules/camunda-modeler-plugin-helpers/helper.js");
+const { returnOrThrow } = __webpack_require__(/*! ../../../helper.js */ "../../node_modules/camunda-modeler-plugin-helpers/helper.js");
 
-module.exports = returnOrThrow(() => window.vendor.propertiesPanel.common, '5.0.0');
-
-
-/***/ }),
-
-/***/ "./node_modules/camunda-modeler-plugin-helpers/vendor/bpmn-js-properties-panel.js":
-/*!****************************************************************************************!*\
-  !*** ./node_modules/camunda-modeler-plugin-helpers/vendor/bpmn-js-properties-panel.js ***!
-  \****************************************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-const { returnOrThrow } = __webpack_require__(/*! ../helper */ "./node_modules/camunda-modeler-plugin-helpers/helper.js");
-
-module.exports = returnOrThrow(() => window.vendor.propertiesPanel.bpmn, '5.0.0');
+module.exports = returnOrThrow(() => window.vendor?.propertiesPanel?.common, '5.0.0');
 
 
-/***/ }),
+/***/ },
 
-/***/ "./node_modules/ids/dist/index.esm.js":
-/*!********************************************!*\
-  !*** ./node_modules/ids/dist/index.esm.js ***!
-  \********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ "../../node_modules/camunda-modeler-plugin-helpers/vendor/bpmn-js-properties-panel.js"
+/*!********************************************************************************************!*\
+  !*** ../../node_modules/camunda-modeler-plugin-helpers/vendor/bpmn-js-properties-panel.js ***!
+  \********************************************************************************************/
+(module, __unused_webpack_exports, __webpack_require__) {
+
+const { returnOrThrow } = __webpack_require__(/*! ../helper.js */ "../../node_modules/camunda-modeler-plugin-helpers/helper.js");
+
+module.exports = returnOrThrow(() => window.vendor?.propertiesPanel?.bpmn, '5.0.0');
+
+
+/***/ },
+
+/***/ "../zeebe-io-properties-panel-extension/dist/index.js"
+/*!************************************************************!*\
+  !*** ../zeebe-io-properties-panel-extension/dist/index.js ***!
+  \************************************************************/
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (/* binding */ index)
 /* harmony export */ });
-function createCommonjsModule(fn, module) {
-	return module = { exports: {} }, fn(module, module.exports), module.exports;
+/* harmony import */ var bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! bpmn-js-properties-panel */ "../../node_modules/camunda-modeler-plugin-helpers/vendor/bpmn-js-properties-panel.js");
+/* harmony import */ var bpmn_js_lib_util_ModelUtil_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil.js */ "../../node_modules/bpmn-js/lib/util/ModelUtil.js");
+/* harmony import */ var _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @bpmn-io/properties-panel */ "../../node_modules/camunda-modeler-plugin-helpers/vendor/@bpmn-io/properties-panel/index.js");
+/* harmony import */ var ids__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ids */ "../../node_modules/ids/dist/index.js");
+
+
+
+
+function canHaveIoSpecification(element) {
+  return !!getIoSpecificationParent(element);
 }
 
-var hat_1 = createCommonjsModule(function (module) {
-var hat = module.exports = function (bits, base) {
-    if (!base) base = 16;
-    if (bits === undefined) bits = 128;
-    if (bits <= 0) return '0';
-    
-    var digits = Math.log(Math.pow(2, bits)) / Math.log(base);
-    for (var i = 2; digits === Infinity; i *= 2) {
-        digits = Math.log(Math.pow(2, bits / i)) / Math.log(base) * i;
+/**
+ * Return element that holds the <ccon:IoSpecification /> element.
+ *
+ * @param {Element} element
+ *
+ * @return {ModdleElement | undefined}
+ */
+function getIoSpecificationParent(element) {
+  if ((0,bpmn_js_lib_util_ModelUtil_js__WEBPACK_IMPORTED_MODULE_1__.isAny)(element, ['bpmn:Process', 'bpmn:Activity', 'bpmn:StartEvent'])) {
+    return (0,bpmn_js_lib_util_ModelUtil_js__WEBPACK_IMPORTED_MODULE_1__.getBusinessObject)(element);
+  }
+  if ((0,bpmn_js_lib_util_ModelUtil_js__WEBPACK_IMPORTED_MODULE_1__.is)(element, 'bpmn:Participant')) {
+    return getProcessRef(element);
+  }
+  return undefined;
+}
+
+/**
+ * Return process ref for a <bpmn:Participant> shape.
+ *
+ * @param {Element} element
+ *
+ * @return {ModdleElement | undefined}
+ */
+function getProcessRef(element) {
+  return (0,bpmn_js_lib_util_ModelUtil_js__WEBPACK_IMPORTED_MODULE_1__.getBusinessObject)(element).processRef;
+}
+function findExtensions(element, types) {
+  const extensionElements = getExtensionElements(element);
+  if (!extensionElements) {
+    return [];
+  }
+  return extensionElements.get('values').filter(value => {
+    return (0,bpmn_js_lib_util_ModelUtil_js__WEBPACK_IMPORTED_MODULE_1__.isAny)(value, [].concat(types));
+  });
+}
+function getExtensionElements(element) {
+  return (0,bpmn_js_lib_util_ModelUtil_js__WEBPACK_IMPORTED_MODULE_1__.getBusinessObject)(element).get('extensionElements');
+}
+function getIoSpecification(element) {
+  const bo = getIoSpecificationParent(element);
+  const ioSpecifications = findExtensions(bo, 'ccon:IoSpecification') || [];
+  if (ioSpecifications.length) {
+    return ioSpecifications[0];
+  }
+  return null;
+}
+function getInputSpecifications(element) {
+  return getIoSpecification(element)?.inputs || [];
+}
+function getOutputSpecifications(element) {
+  return getIoSpecification(element)?.outputs || [];
+}
+function createExtensionElements(element, bpmnFactory) {
+  const bo = (0,bpmn_js_lib_util_ModelUtil_js__WEBPACK_IMPORTED_MODULE_1__.getBusinessObject)(element);
+  return createElement('bpmn:ExtensionElements', {
+    values: []
+  }, bo, bpmnFactory);
+}
+function createIoSpecification(extensionElements, bpmnFactory) {
+  return createElement('ccon:IoSpecification', {
+    inputs: [],
+    outputs: []
+  }, extensionElements, bpmnFactory);
+}
+function createInputSpecification(ioSpecification, bpmnFactory, properties) {
+  return createElement('ccon:InputSpecification', properties, ioSpecification, bpmnFactory);
+}
+function createOutputSpecification(ioSpecification, bpmnFactory, properties) {
+  return createElement('ccon:OutputSpecification', properties, ioSpecification, bpmnFactory);
+}
+function createElement(elementType, properties, parent, factory) {
+  const element = factory.create(elementType, properties);
+  element.$parent = parent;
+  return element;
+}
+const ids = new ids__WEBPACK_IMPORTED_MODULE_3__.Ids([16, 36, 1]);
+
+// input specification //////////////////
+
+function createInputSpecificationGroup(element, injector) {
+  const translate = injector.get('translate');
+  const inputSpecifications = getInputSpecifications(element);
+  const inputSpecificationGroup = {
+    id: 'input-specification',
+    label: translate('Input specification'),
+    tooltip: translate('Specify input variables that this element consumes.'),
+    component: _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_2__.ListGroup,
+    add: addInputSpecificationFactory(element, injector),
+    items: inputSpecifications.map(function (inputSpecification, index) {
+      const id = `${element.id}-input-specification-${index}`;
+      return InputSpecificationItem({
+        id,
+        element,
+        item: inputSpecification,
+        injector
+      });
+    })
+  };
+  return inputSpecificationGroup;
+}
+function addInputSpecificationFactory(element, injector) {
+  const bpmnFactory = injector.get('bpmnFactory'),
+    commandStack = injector.get('commandStack');
+  function add(event) {
+    event.stopPropagation();
+    const commands = [];
+    const businessObject = getIoSpecificationParent(element);
+    let extensionElements = getExtensionElements(businessObject);
+    if (!extensionElements) {
+      extensionElements = createExtensionElements(businessObject, bpmnFactory);
+      commands.push({
+        cmd: 'element.updateModdleProperties',
+        context: {
+          element,
+          moddleElement: businessObject,
+          properties: {
+            extensionElements
+          }
+        }
+      });
     }
-    
-    var rem = digits - Math.floor(digits);
-    
-    var res = '';
-    
-    for (var i = 0; i < Math.floor(digits); i++) {
-        var x = Math.floor(Math.random() * base).toString(base);
-        res = x + res;
+    const extensionElementValues = extensionElements.get('values');
+    let ioSpecification = extensionElementValues.find(v => (0,bpmn_js_lib_util_ModelUtil_js__WEBPACK_IMPORTED_MODULE_1__.is)(v, 'ccon:IoSpecification'));
+    if (!ioSpecification) {
+      ioSpecification = createIoSpecification(extensionElements, bpmnFactory);
+      commands.push({
+        cmd: 'element.updateModdleProperties',
+        context: {
+          element,
+          moddleElement: extensionElements,
+          properties: {
+            values: extensionElementValues.concat(ioSpecification)
+          }
+        }
+      });
     }
-    
-    if (rem) {
-        var b = Math.pow(base, rem);
-        var x = Math.floor(Math.random() * b).toString(base);
-        res = x + res;
+    const inputSpecification = createInputSpecification(ioSpecification, bpmnFactory, {
+      name: `variable_${ids.next()}`,
+      type: 'string',
+      description: '',
+      schema: ''
+    });
+    commands.push({
+      cmd: 'element.updateModdleProperties',
+      context: {
+        element,
+        moddleElement: ioSpecification,
+        properties: {
+          inputs: ioSpecification.get('inputs').concat(inputSpecification)
+        }
+      }
+    });
+    return commandStack.execute('properties-panel.multi-command-executor', commands);
+  }
+  return add;
+}
+function removeInputSpecificationFactory(element, item, modeling) {
+  return function (event) {
+    event.stopPropagation();
+    const businessObject = getIoSpecificationParent(element);
+    const ioSpecification = getIoSpecification(businessObject);
+    modeling.updateModdleProperties(element, ioSpecification, {
+      inputs: ioSpecification.get('inputs').filter(value => value !== item)
+    });
+  };
+}
+
+/**
+ * @param { {
+ *   id: string,
+ *   element: Element,
+ *   item: ModdleElement,
+ *   injector: Injector
+ * } } props
+ */
+function InputSpecificationItem(props) {
+  const {
+    id,
+    element,
+    item,
+    injector
+  } = props;
+  return {
+    id,
+    label: `${item.name || ''} : ${item.type}`,
+    entries: [{
+      id: `${id}-name`,
+      component: Name,
+      item,
+      element
+    }, {
+      id: `${id}-type`,
+      component: Type,
+      item,
+      element
+    }, {
+      id: `${id}-description`,
+      component: Description,
+      item,
+      element
+    }, {
+      id: `${id}-schema`,
+      component: Schema,
+      item,
+      element
+    }, {
+      id: `${id}-required`,
+      component: Required,
+      item,
+      element
+    }],
+    autoFocusEntry: id + '-name',
+    remove: removeInputSpecificationFactory(element, item, injector.get('modeling'))
+  };
+}
+
+// output specification /////////////////
+
+function createOutputSpecificationGroup(element, injector) {
+  const translate = injector.get('translate');
+  const outputSpecifications = getOutputSpecifications(element);
+  const outputSpecificationGroup = {
+    id: 'output-specification',
+    label: translate('Output specification'),
+    tooltip: translate('Specify output variables that this element produces.'),
+    component: _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_2__.ListGroup,
+    add: addOutputSpecificationFactory(element, injector),
+    items: outputSpecifications.map(function (outputSpecification, index) {
+      const id = `${element.id}-output-specification-${index}`;
+      return OutputSpecificationItem({
+        id,
+        element,
+        item: outputSpecification,
+        injector
+      });
+    })
+  };
+  return outputSpecificationGroup;
+}
+function addOutputSpecificationFactory(element, injector) {
+  const bpmnFactory = injector.get('bpmnFactory'),
+    commandStack = injector.get('commandStack');
+  function add(event) {
+    event.stopPropagation();
+    const commands = [];
+    const businessObject = getIoSpecificationParent(element);
+    let extensionElements = getExtensionElements(businessObject);
+    if (!extensionElements) {
+      extensionElements = createExtensionElements(businessObject, bpmnFactory);
+      commands.push({
+        cmd: 'element.updateModdleProperties',
+        context: {
+          element,
+          moddleElement: businessObject,
+          properties: {
+            extensionElements
+          }
+        }
+      });
     }
-    
-    var parsed = parseInt(res, base);
-    if (parsed !== Infinity && parsed >= Math.pow(2, bits)) {
-        return hat(bits, base)
+    const extensionElementValues = extensionElements.get('values');
+    let ioSpecification = extensionElementValues.find(v => (0,bpmn_js_lib_util_ModelUtil_js__WEBPACK_IMPORTED_MODULE_1__.is)(v, 'ccon:IoSpecification'));
+    if (!ioSpecification) {
+      ioSpecification = createIoSpecification(extensionElements, bpmnFactory);
+      commands.push({
+        cmd: 'element.updateModdleProperties',
+        context: {
+          element,
+          moddleElement: extensionElements,
+          properties: {
+            values: extensionElementValues.concat(ioSpecification)
+          }
+        }
+      });
     }
-    else return res;
+    const outputSpecification = createOutputSpecification(ioSpecification, bpmnFactory, {
+      name: `variable_${ids.next()}`,
+      type: 'string',
+      description: '',
+      schema: ''
+    });
+    commands.push({
+      cmd: 'element.updateModdleProperties',
+      context: {
+        element,
+        moddleElement: ioSpecification,
+        properties: {
+          outputs: ioSpecification.get('outputs').concat(outputSpecification)
+        }
+      }
+    });
+    return commandStack.execute('properties-panel.multi-command-executor', commands);
+  }
+  return add;
+}
+function removeOutputSpecificationFactory(element, item, modeling) {
+  return function (event) {
+    event.stopPropagation();
+    const businessObject = getIoSpecificationParent(element);
+    const ioSpecification = getIoSpecification(businessObject);
+    modeling.updateModdleProperties(element, ioSpecification, {
+      outputs: ioSpecification.get('outputs').filter(value => value !== item)
+    });
+  };
+}
+
+/**
+ * @param { {
+ *   id: string,
+ *   element: Element,
+ *   item: ModdleElement,
+ *   injector: Injector
+ * } } props
+ */
+function OutputSpecificationItem(props) {
+  const {
+    id,
+    element,
+    item,
+    injector
+  } = props;
+  return {
+    id,
+    label: `${item.name || ''} : ${item.type}`,
+    entries: [{
+      id: `${id}-name`,
+      component: Name,
+      item,
+      element
+    }, {
+      id: `${id}-type`,
+      component: Type,
+      item,
+      element
+    }, {
+      id: `${id}-description`,
+      component: Description,
+      item,
+      element
+    }, {
+      id: `${id}-schema`,
+      component: Schema,
+      item,
+      element
+    }],
+    autoFocusEntry: id + '-name',
+    remove: removeOutputSpecificationFactory(element, item, injector.get('modeling'))
+  };
+}
+
+// individual properties ///////////
+
+function Name(props) {
+  const {
+    id,
+    element,
+    item
+  } = props;
+  const modeling = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__.useService)('modeling');
+  const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__.useService)('translate');
+  const debounce = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__.useService)('debounceInput');
+  const setValue = value => {
+    updateItemProperty(element, item, {
+      name: value || ''
+    }, modeling);
+  };
+  const getValue = () => {
+    return item.name || '';
+  };
+
+  // return error if contains spaces
+  const validate = value => {
+    if (!value) {
+      return translate('Must have a name.');
+    }
+    if (/\s/.test(value)) {
+      return translate('Name must not contain spaces.');
+    }
+  };
+  return (0,_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_2__.TextFieldEntry)({
+    element: item,
+    id,
+    label: translate('Name'),
+    getValue,
+    setValue,
+    debounce,
+    validate
+  });
+}
+function Type(props) {
+  const {
+    id,
+    element,
+    item
+  } = props;
+  const modeling = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__.useService)('modeling');
+  const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__.useService)('translate');
+  const debounce = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__.useService)('debounceInput');
+  const setValue = value => {
+    updateItemProperty(element, item, {
+      type: value
+    }, modeling);
+  };
+  const getValue = () => {
+    return item.type || 'string';
+  };
+
+  // return error if contains spaces
+  const validate = value => {
+    if (!value) {
+      return translate('Must have a type.');
+    }
+  };
+  return (0,_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_2__.TextFieldEntry)({
+    element: item,
+    id,
+    label: translate('Type'),
+    getValue,
+    setValue,
+    debounce,
+    validate
+  });
+}
+function Description(props) {
+  const {
+    id,
+    element,
+    item
+  } = props;
+  const modeling = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__.useService)('modeling');
+  const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__.useService)('translate');
+  const debounce = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__.useService)('debounceInput');
+  const setValue = value => {
+    updateItemProperty(element, item, {
+      description: value || ''
+    }, modeling);
+  };
+  const getValue = () => {
+    return item.description || '';
+  };
+  return (0,_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_2__.TextAreaEntry)({
+    element: item,
+    id,
+    label: translate('Description'),
+    getValue,
+    setValue,
+    debounce
+  });
+}
+function Schema(props) {
+  const {
+    id,
+    element,
+    item
+  } = props;
+  const modeling = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__.useService)('modeling');
+  const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__.useService)('translate');
+  const debounce = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__.useService)('debounceInput');
+  const setValue = value => {
+    updateItemProperty(element, item, {
+      schema: value || ''
+    }, modeling);
+  };
+  const getValue = () => {
+    return item.schema || '';
+  };
+  return (0,_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_2__.TextAreaEntry)({
+    element: item,
+    id,
+    label: translate('Schema'),
+    getValue,
+    setValue,
+    debounce
+  });
+}
+function Required(props) {
+  const {
+    id,
+    element,
+    item
+  } = props;
+  const modeling = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__.useService)('modeling');
+  const translate = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__.useService)('translate');
+  const debounce = (0,bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__.useService)('debounceInput');
+  const setValue = value => {
+    updateItemProperty(element, item, {
+      required: value
+    }, modeling);
+  };
+  const getValue = () => {
+    return item.required;
+  };
+  return (0,_bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_2__.CheckboxEntry)({
+    element: item,
+    id,
+    label: translate('Required'),
+    getValue,
+    setValue,
+    debounce
+  });
+}
+
+// helpers ////////////
+
+function updateItemProperty(element, businessObject, newProperties, modeling) {
+  return modeling.updateModdleProperties(element, businessObject, newProperties);
+}
+
+// ensure we load after element templates
+const EVEN_LOWER_PRIORITY = 299;
+
+/**
+ * An extension that makes process IO mappings configurable via a new
+ * properties tab.
+ *
+ * @param {import('didi').Injector} injector
+ */
+class ProcessIoExtensionProvider {
+  constructor(propertiesPanel, injector) {
+    this._injector = injector;
+    propertiesPanel.registerProvider(EVEN_LOWER_PRIORITY, this);
+  }
+  getGroups(element) {
+    return groups => {
+      if (!canHaveIoSpecification(element)) {
+        return groups;
+      }
+      const insertIndex = findInsertIndex(groups);
+      return [...groups.slice(0, insertIndex), createInputSpecificationGroup(element, this._injector), createOutputSpecificationGroup(element, this._injector), ...groups.slice(insertIndex)];
+    };
+  }
+}
+function findInsertIndex(groups) {
+  let afterGroups = ['general', 'documentation', 'general', 'ElementTemplates__Template'];
+  let beforeGroups = ['inputs', 'outputs', 'ElementTemplates__CustomProperties-output'];
+  let insertBefore = null;
+  let insertAfter = 0;
+  for (let i = groups.length - 1; i >= 0; i--) {
+    const group = groups[i];
+
+    // select last before group in list
+    if (beforeGroups.includes(group.id)) {
+      insertBefore = i;
+    }
+
+    // find first after group in list
+    if (afterGroups.includes(group.id)) {
+      insertAfter = i;
+      break;
+    }
+  }
+  if (insertBefore === null) {
+    return insertAfter + 1;
+  }
+  return insertBefore;
+}
+ProcessIoExtensionProvider.$inject = ['propertiesPanel', 'injector'];
+var index = {
+  __init__: ['propertiesPanelIoExtensionProvider'],
+  propertiesPanelIoExtensionProvider: ['type', ProcessIoExtensionProvider]
 };
 
-hat.rack = function (bits, base, expandBy) {
-    var fn = function (data) {
-        var iters = 0;
-        do {
-            if (iters ++ > 10) {
-                if (expandBy) bits += expandBy;
-                else throw new Error('too many ID collisions, use more bits')
-            }
-            
-            var id = hat(bits, base);
-        } while (Object.hasOwnProperty.call(hats, id));
-        
-        hats[id] = data;
-        return id;
-    };
-    var hats = fn.hats = {};
-    
-    fn.get = function (id) {
-        return fn.hats[id];
-    };
-    
-    fn.set = function (id, value) {
-        fn.hats[id] = value;
-        return fn;
-    };
-    
-    fn.bits = bits || 128;
-    fn.base = base || 16;
-    return fn;
-};
-});
+
+/***/ },
+
+/***/ "../../node_modules/ids/dist/index.js"
+/*!********************************************!*\
+  !*** ../../node_modules/ids/dist/index.js ***!
+  \********************************************/
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   Ids: () => (/* binding */ Ids)
+/* harmony export */ });
+function getDefaultExportFromCjs (x) {
+	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
+}
+
+var hat$1 = {exports: {}};
+
+var hasRequiredHat;
+
+function requireHat () {
+	if (hasRequiredHat) return hat$1.exports;
+	hasRequiredHat = 1;
+	var hat = hat$1.exports = function (bits, base) {
+	    if (!base) base = 16;
+	    if (bits === undefined) bits = 128;
+	    if (bits <= 0) return '0';
+	    
+	    var digits = Math.log(Math.pow(2, bits)) / Math.log(base);
+	    for (var i = 2; digits === Infinity; i *= 2) {
+	        digits = Math.log(Math.pow(2, bits / i)) / Math.log(base) * i;
+	    }
+	    
+	    var rem = digits - Math.floor(digits);
+	    
+	    var res = '';
+	    
+	    for (var i = 0; i < Math.floor(digits); i++) {
+	        var x = Math.floor(Math.random() * base).toString(base);
+	        res = x + res;
+	    }
+	    
+	    if (rem) {
+	        var b = Math.pow(base, rem);
+	        var x = Math.floor(Math.random() * b).toString(base);
+	        res = x + res;
+	    }
+	    
+	    var parsed = parseInt(res, base);
+	    if (parsed !== Infinity && parsed >= Math.pow(2, bits)) {
+	        return hat(bits, base)
+	    }
+	    else return res;
+	};
+
+	hat.rack = function (bits, base, expandBy) {
+	    var fn = function (data) {
+	        var iters = 0;
+	        do {
+	            if (iters ++ > 10) {
+	                if (expandBy) bits += expandBy;
+	                else throw new Error('too many ID collisions, use more bits')
+	            }
+	            
+	            var id = hat(bits, base);
+	        } while (Object.hasOwnProperty.call(hats, id));
+	        
+	        hats[id] = data;
+	        return id;
+	    };
+	    var hats = fn.hats = {};
+	    
+	    fn.get = function (id) {
+	        return fn.hats[id];
+	    };
+	    
+	    fn.set = function (id, value) {
+	        fn.hats[id] = value;
+	        return fn;
+	    };
+	    
+	    fn.bits = bits || 128;
+	    fn.base = base || 16;
+	    return fn;
+	};
+	return hat$1.exports;
+}
+
+var hatExports = requireHat();
+var hat = /*@__PURE__*/getDefaultExportFromCjs(hatExports);
+
+/**
+ * @typedef { [ number, number ] | [ number, number, number ] } Seed
+ */
 
 /**
  * Create a new id generator / cache instance.
  *
  * You may optionally provide a seed that is used internally.
  *
- * @param {Seed} seed
+ * @param {Seed} [seed]
  */
 function Ids(seed) {
+
   if (!(this instanceof Ids)) {
     return new Ids(seed);
   }
-  seed = seed || [128, 36, 1];
-  this._seed = seed.length ? hat_1.rack(seed[0], seed[1], seed[2]) : seed;
+
+  seed = seed || [ 128, 36, 1 ];
+  this._seed = seed.length ? hat.rack(seed[0], seed[1], seed[2]) : seed;
 }
 
 /**
@@ -1101,9 +1216,9 @@ function Ids(seed) {
  *
  * @param {Object} [element] element to bind the id to
  *
- * @return {String} id
+ * @return {string} id
  */
-Ids.prototype.next = function (element) {
+Ids.prototype.next = function(element) {
   return this._seed(element || true);
 };
 
@@ -1112,10 +1227,11 @@ Ids.prototype.next = function (element) {
  *
  * @param {Object} [element] element to bind the id to
  *
- * @return {String} id
+ * @return {string} id
  */
-Ids.prototype.nextPrefixed = function (prefix, element) {
+Ids.prototype.nextPrefixed = function(prefix, element) {
   var id;
+
   do {
     id = prefix + this.next(true);
   } while (this.assigned(id));
@@ -1130,54 +1246,56 @@ Ids.prototype.nextPrefixed = function (prefix, element) {
 /**
  * Manually claim an existing id.
  *
- * @param {String} id
- * @param {String} [element] element the id is claimed by
+ * @param {string} id
+ * @param {any} [element] element the id is claimed by
  */
-Ids.prototype.claim = function (id, element) {
+Ids.prototype.claim = function(id, element) {
   this._seed.set(id, element || true);
 };
 
 /**
  * Returns true if the given id has already been assigned.
  *
- * @param  {String} id
- * @return {Boolean}
+ * @param  {string} id
+ * @return {boolean}
  */
-Ids.prototype.assigned = function (id) {
+Ids.prototype.assigned = function(id) {
   return this._seed.get(id) || false;
 };
 
 /**
  * Unclaim an id.
  *
- * @param  {String} id the id to unclaim
+ * @param  {string} id the id to unclaim
  */
-Ids.prototype.unclaim = function (id) {
+Ids.prototype.unclaim = function(id) {
   delete this._seed.hats[id];
 };
+
 
 /**
  * Clear all claimed ids.
  */
-Ids.prototype.clear = function () {
+Ids.prototype.clear = function() {
+
   var hats = this._seed.hats,
-    id;
+      id;
+
   for (id in hats) {
     this.unclaim(id);
   }
 };
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Ids);
-//# sourceMappingURL=index.esm.js.map
 
 
-/***/ }),
 
-/***/ "./node_modules/min-dash/dist/index.esm.js":
+/***/ },
+
+/***/ "../../node_modules/min-dash/dist/index.js"
 /*!*************************************************!*\
-  !*** ./node_modules/min-dash/dist/index.esm.js ***!
+  !*** ../../node_modules/min-dash/dist/index.js ***!
   \*************************************************/
-/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
@@ -1305,7 +1423,7 @@ function ensureArray(obj) {
  * @return {Boolean}
  */
 function has(target, key) {
-  return nativeHasOwnProperty.call(target, key);
+  return !isNil(target) && nativeHasOwnProperty.call(target, key);
 }
 
 /**
@@ -1394,7 +1512,7 @@ function find(collection, matcher) {
  * @param {Collection<T>} collection
  * @param {Matcher<T>} matcher
  *
- * @return {number}
+ * @return {number | string | undefined}
  */
 function findIndex(collection, matcher) {
 
@@ -1768,8 +1886,6 @@ function toNum(arg) {
   return Number(arg);
 }
 
-/* global setTimeout clearTimeout */
-
 /**
  * @typedef { {
  *   (...args: any[]): any;
@@ -2094,7 +2210,18 @@ function merge(target, ...sources) {
 
 
 
-/***/ })
+/***/ },
+
+/***/ "../zeebe-io-moddle/resources/ccon.json"
+/*!**********************************************!*\
+  !*** ../zeebe-io-moddle/resources/ccon.json ***!
+  \**********************************************/
+(module) {
+
+"use strict";
+module.exports = /*#__PURE__*/JSON.parse('{"name":"ccon","prefix":"ccon","uri":"http://ccon.camunda.io","xml":{"tagAlias":"lowerCase"},"associations":[],"types":[{"name":"IoSpecification","superClass":["Element"],"properties":[{"name":"inputs","isMany":true,"type":"InputSpecification"},{"name":"outputs","isMany":true,"type":"OutputSpecfication"}],"meta":{"allowedIn":["bpmn:Process","bpmn:Activity","bpmn:Event"]}},{"name":"InputSpecification","properties":[{"name":"name","isAttr":true,"type":"String"},{"name":"description","isAttr":true,"type":"String"},{"name":"type","isAttr":true,"type":"String"},{"name":"required","isAttr":true,"type":"Boolean","default":true},{"name":"schema","isAttr":true,"type":"String"}]},{"name":"OutputSpecification","properties":[{"name":"name","isAttr":true,"type":"String"},{"name":"description","isAttr":true,"type":"String"},{"name":"type","isAttr":true,"type":"String"},{"name":"schema","isAttr":true,"type":"String"}]}]}');
+
+/***/ }
 
 /******/ 	});
 /************************************************************************/
@@ -2116,6 +2243,12 @@ function merge(target, ...sources) {
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
+/******/ 		if (!(moduleId in __webpack_modules__)) {
+/******/ 			delete __webpack_module_cache__[moduleId];
+/******/ 			var e = new Error("Cannot find module '" + moduleId + "'");
+/******/ 			e.code = 'MODULE_NOT_FOUND';
+/******/ 			throw e;
+/******/ 		}
 /******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
 /******/ 	
 /******/ 		// Return the exports of the module
@@ -2123,18 +2256,6 @@ function merge(target, ...sources) {
 /******/ 	}
 /******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__webpack_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__webpack_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
 /******/ 		// define getter functions for harmony exports
@@ -2165,18 +2286,21 @@ function merge(target, ...sources) {
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+// This entry needs to be wrapped in an IIFE because it needs to be in strict mode.
 (() => {
 "use strict";
 /*!**************************!*\
   !*** ./client/client.js ***!
   \**************************/
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var camunda_modeler_plugin_helpers__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! camunda-modeler-plugin-helpers */ "./node_modules/camunda-modeler-plugin-helpers/index.js");
-/* harmony import */ var _properties_panel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./properties-panel */ "./client/properties-panel/index.js");
+/* harmony import */ var camunda_modeler_plugin_helpers__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! camunda-modeler-plugin-helpers */ "../../node_modules/camunda-modeler-plugin-helpers/index.js");
+/* harmony import */ var zeebe_io_properties_panel_extension__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! zeebe-io-properties-panel-extension */ "../zeebe-io-properties-panel-extension/dist/index.js");
+/* harmony import */ var zeebe_io_moddle_resources_ccon_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! zeebe-io-moddle/resources/ccon.json */ "../zeebe-io-moddle/resources/ccon.json");
 
 
-(0,camunda_modeler_plugin_helpers__WEBPACK_IMPORTED_MODULE_0__.registerPlatformBpmnJSPlugin)(_properties_panel__WEBPACK_IMPORTED_MODULE_1__["default"]);
+
+(0,camunda_modeler_plugin_helpers__WEBPACK_IMPORTED_MODULE_0__.registerCloudBpmnJSPlugin)(zeebe_io_properties_panel_extension__WEBPACK_IMPORTED_MODULE_1__["default"]);
+(0,camunda_modeler_plugin_helpers__WEBPACK_IMPORTED_MODULE_0__.registerCloudBpmnJSModdleExtension)(zeebe_io_moddle_resources_ccon_json__WEBPACK_IMPORTED_MODULE_2__);
 })();
 
 /******/ })()

@@ -1,35 +1,33 @@
 {
-  "name": "camunda-modeler-process-io-specification-plugin",
-  "version": "0.4.0",
-  "description": "Document BPMN process inputs and outputs using the Camunda Modeler",
-  "main": "index.js",
-  "scripts": {
-    "all": "run-s bundle",
-    "bundle": "webpack",
-    "bundle:watch": "webpack --watch"
+  "name": "camunda-io-specification-parent",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Parent project of the Camunda io/specification project",
+  "homepage": "https://github.com/camunda/camunda-modeler-process-io-specification-plugin#readme",
+  "bugs": {
+    "url": "https://github.com/camunda/camunda-modeler-process-io-specification-plugin/issues"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/camunda/camunda-modeler-process-io-specification-plugin.git"
   },
-  "keywords": [
-    "camunda",
-    "modeler",
-    "plugin"
-  ],
-  "author": "Nico Rehwaldt",
   "license": "MIT",
-  "devDependencies": {
-    "@babel/core": "^7.23.9",
-    "camunda-modeler-plugin-helpers": "^5.0.0",
-    "camunda-modeler-webpack-plugin": "^0.1.0",
-    "npm-run-all2": "^6.1.1",
-    "webpack": "^5.90.0",
-    "webpack-cli": "^5.1.4"
+  "author": {
+    "name": "Nico Rehwaldt",
+    "url": "https://github.com/nikku"
   },
-  "dependencies": {
-    "bpmn-js": "^16.4.0",
-    "diagram-js": "^13.4.0",
-    "inherits-browser": "^0.1.0"
+  "workspaces": [
+    "./packages/zeebe-io-moddle",
+    "./packages/zeebe-io-properties-panel-extension",
+    "./packages/camunda-modeler-platform-plugin",
+    "./packages/camunda-modeler-cloud-plugin"
+  ],
+  "scripts": {
+    "test": "npm run test --workspaces --if-present",
+    "all": "npm run all --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present"
+  },
+  "devDependencies": {
+    "npm-run-all2": "^8.0.4"
   }
 }
