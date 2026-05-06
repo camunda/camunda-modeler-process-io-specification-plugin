@@ -1,11 +1,8 @@
 import {
-  createInputSpecificationGroup,
-  createOutputSpecificationGroup
+  createToolInputsGroup
 } from './props/process-io-groups.js';
 
-import {
-  canHaveIoSpecification
-} from './process-io-helper.js';
+import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil.js';
 
 // ensure we load after element templates
 const EVEN_LOWER_PRIORITY = 299;
@@ -25,20 +22,31 @@ export default class ProcessIoExtensionProvider {
 
   getGroups(element) {
     return groups => {
-      if (!canHaveIoSpecification(element)) {
-        return groups;
+      const result = groups.slice();
+
+      // "Tool inputs" group for start events and AHSP children
+      if (isToolInputTarget(element)) {
+        const insertIndex = findInsertIndex(result);
+        result.splice(insertIndex, 0, createToolInputsGroup(element, this._injector));
       }
 
-      const insertIndex = findInsertIndex(groups);
-
-      return [
-        ...groups.slice(0, insertIndex),
-        createInputSpecificationGroup(element, this._injector),
-        createOutputSpecificationGroup(element, this._injector),
-        ...groups.slice(insertIndex)
-      ];
+      return result;
     };
   }
+}
+
+function isToolInputTarget(element) {
+  const bo = getBusinessObject(element);
+
+  if (is(element, 'bpmn:StartEvent') && is(bo.$parent, 'bpmn:Process')) {
+    return true;
+  }
+
+  if (is(element, 'bpmn:FlowNode') && is(bo.$parent, 'bpmn:AdHocSubProcess')) {
+    return true;
+  }
+
+  return false;
 }
 
 function findInsertIndex(groups) {

@@ -520,7 +520,8 @@ module.exports = returnOrThrow(() => window.vendor?.propertiesPanel?.bpmn, '5.0.
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ index)
+/* harmony export */   "default": () => (/* binding */ index),
+/* harmony export */   externalParametersModdle: () => (/* binding */ zeebeExternalParameters)
 /* harmony export */ });
 /* harmony import */ var bpmn_js_properties_panel__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! bpmn-js-properties-panel */ "../../node_modules/camunda-modeler-plugin-helpers/vendor/bpmn-js-properties-panel.js");
 /* harmony import */ var bpmn_js_lib_util_ModelUtil_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bpmn-js/lib/util/ModelUtil.js */ "../../node_modules/bpmn-js/lib/util/ModelUtil.js");
@@ -530,37 +531,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function canHaveIoSpecification(element) {
-  return !!getIoSpecificationParent(element);
-}
-
-/**
- * Return element that holds the <ccon:IoSpecification /> element.
- *
- * @param {Element} element
- *
- * @return {ModdleElement | undefined}
- */
-function getIoSpecificationParent(element) {
-  if ((0,bpmn_js_lib_util_ModelUtil_js__WEBPACK_IMPORTED_MODULE_1__.isAny)(element, ['bpmn:Process', 'bpmn:Activity', 'bpmn:StartEvent'])) {
-    return (0,bpmn_js_lib_util_ModelUtil_js__WEBPACK_IMPORTED_MODULE_1__.getBusinessObject)(element);
-  }
-  if ((0,bpmn_js_lib_util_ModelUtil_js__WEBPACK_IMPORTED_MODULE_1__.is)(element, 'bpmn:Participant')) {
-    return getProcessRef(element);
-  }
-  return undefined;
-}
-
-/**
- * Return process ref for a <bpmn:Participant> shape.
- *
- * @param {Element} element
- *
- * @return {ModdleElement | undefined}
- */
-function getProcessRef(element) {
-  return (0,bpmn_js_lib_util_ModelUtil_js__WEBPACK_IMPORTED_MODULE_1__.getBusinessObject)(element).processRef;
-}
 function findExtensions(element, types) {
   const extensionElements = getExtensionElements(element);
   if (!extensionElements) {
@@ -573,75 +543,80 @@ function findExtensions(element, types) {
 function getExtensionElements(element) {
   return (0,bpmn_js_lib_util_ModelUtil_js__WEBPACK_IMPORTED_MODULE_1__.getBusinessObject)(element).get('extensionElements');
 }
-function getIoSpecification(element) {
-  const bo = getIoSpecificationParent(element);
-  const ioSpecifications = findExtensions(bo, 'ccon:IoSpecification') || [];
-  if (ioSpecifications.length) {
-    return ioSpecifications[0];
-  }
-  return null;
-}
-function getInputSpecifications(element) {
-  return getIoSpecification(element)?.inputs || [];
-}
-function getOutputSpecifications(element) {
-  return getIoSpecification(element)?.outputs || [];
-}
 function createExtensionElements(element, bpmnFactory) {
   const bo = (0,bpmn_js_lib_util_ModelUtil_js__WEBPACK_IMPORTED_MODULE_1__.getBusinessObject)(element);
   return createElement('bpmn:ExtensionElements', {
     values: []
   }, bo, bpmnFactory);
 }
-function createIoSpecification(extensionElements, bpmnFactory) {
-  return createElement('ccon:IoSpecification', {
-    inputs: [],
-    outputs: []
-  }, extensionElements, bpmnFactory);
-}
-function createInputSpecification(ioSpecification, bpmnFactory, properties) {
-  return createElement('ccon:InputSpecification', properties, ioSpecification, bpmnFactory);
-}
-function createOutputSpecification(ioSpecification, bpmnFactory, properties) {
-  return createElement('ccon:OutputSpecification', properties, ioSpecification, bpmnFactory);
-}
 function createElement(elementType, properties, parent, factory) {
   const element = factory.create(elementType, properties);
   element.$parent = parent;
   return element;
 }
+
+// zeebe:ExternalParameters helpers
+
+function getExternalParameters(element) {
+  const bo = (0,bpmn_js_lib_util_ModelUtil_js__WEBPACK_IMPORTED_MODULE_1__.getBusinessObject)(element);
+  const matches = findExtensions(bo, 'specext:ExternalParameters');
+  return matches.length ? matches[0] : null;
+}
+function getExternalInputSpecifications(element) {
+  return getExternalParameters(element)?.inputSpecification || [];
+}
+function createExternalParameters(extensionElements, bpmnFactory) {
+  return createElement('specext:ExternalParameters', {
+    inputSpecification: []
+  }, extensionElements, bpmnFactory);
+}
+function createExternalInputSpecification(bpmnFactory, properties) {
+  const {
+    name,
+    description = '',
+    type = 'string',
+    required = true,
+    schema = ''
+  } = properties;
+  return createElement('specext:InputSpecification', {
+    name,
+    description,
+    type,
+    required,
+    schema
+  }, null, bpmnFactory);
+}
 const ids = new ids__WEBPACK_IMPORTED_MODULE_3__.Ids([16, 36, 1]);
 
-// input specification //////////////////
+// tool inputs (zeebe:ExternalParameters) ////////
 
-function createInputSpecificationGroup(element, injector) {
+function createToolInputsGroup(element, injector) {
   const translate = injector.get('translate');
-  const inputSpecifications = getInputSpecifications(element);
-  const inputSpecificationGroup = {
-    id: 'input-specification',
-    label: translate('Input specification'),
-    tooltip: translate('Specify input variables that this element consumes.'),
+  const inputSpecifications = getExternalInputSpecifications(element);
+  return {
+    id: 'tool-inputs-group',
+    label: translate('Tool inputs'),
+    tooltip: translate('Specify tool input parameters for MCP or Agent Connector.'),
     component: _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_2__.ListGroup,
-    add: addInputSpecificationFactory(element, injector),
-    items: inputSpecifications.map(function (inputSpecification, index) {
-      const id = `${element.id}-input-specification-${index}`;
-      return InputSpecificationItem({
+    add: addExternalInputSpecificationFactory(element, injector),
+    items: inputSpecifications.map(function (param, index) {
+      const id = `${element.id}-tool-input-${index}`;
+      return ToolInputSpecificationItem({
         id,
         element,
-        item: inputSpecification,
+        item: param,
         injector
       });
     })
   };
-  return inputSpecificationGroup;
 }
-function addInputSpecificationFactory(element, injector) {
+function addExternalInputSpecificationFactory(element, injector) {
   const bpmnFactory = injector.get('bpmnFactory'),
     commandStack = injector.get('commandStack');
   function add(event) {
     event.stopPropagation();
     const commands = [];
-    const businessObject = getIoSpecificationParent(element);
+    const businessObject = (0,bpmn_js_lib_util_ModelUtil_js__WEBPACK_IMPORTED_MODULE_1__.getBusinessObject)(element);
     let extensionElements = getExtensionElements(businessObject);
     if (!extensionElements) {
       extensionElements = createExtensionElements(businessObject, bpmnFactory);
@@ -657,33 +632,34 @@ function addInputSpecificationFactory(element, injector) {
       });
     }
     const extensionElementValues = extensionElements.get('values');
-    let ioSpecification = extensionElementValues.find(v => (0,bpmn_js_lib_util_ModelUtil_js__WEBPACK_IMPORTED_MODULE_1__.is)(v, 'ccon:IoSpecification'));
-    if (!ioSpecification) {
-      ioSpecification = createIoSpecification(extensionElements, bpmnFactory);
+    let externalParameters = getExternalParameters(element);
+    if (!externalParameters) {
+      externalParameters = createExternalParameters(extensionElements, bpmnFactory);
       commands.push({
         cmd: 'element.updateModdleProperties',
         context: {
           element,
           moddleElement: extensionElements,
           properties: {
-            values: extensionElementValues.concat(ioSpecification)
+            values: extensionElementValues.concat(externalParameters)
           }
         }
       });
     }
-    const inputSpecification = createInputSpecification(ioSpecification, bpmnFactory, {
-      name: `variable_${ids.next()}`,
+    const inputSpecification = createExternalInputSpecification(bpmnFactory, {
+      name: `param_${ids.next()}`,
       type: 'string',
       description: '',
+      required: true,
       schema: ''
     });
     commands.push({
       cmd: 'element.updateModdleProperties',
       context: {
         element,
-        moddleElement: ioSpecification,
+        moddleElement: externalParameters,
         properties: {
-          inputs: ioSpecification.get('inputs').concat(inputSpecification)
+          inputSpecification: externalParameters.get('inputSpecification').concat(inputSpecification)
         }
       }
     });
@@ -691,26 +667,16 @@ function addInputSpecificationFactory(element, injector) {
   }
   return add;
 }
-function removeInputSpecificationFactory(element, item, modeling) {
+function removeExternalInputSpecificationFactory(element, item, modeling) {
   return function (event) {
     event.stopPropagation();
-    const businessObject = getIoSpecificationParent(element);
-    const ioSpecification = getIoSpecification(businessObject);
-    modeling.updateModdleProperties(element, ioSpecification, {
-      inputs: ioSpecification.get('inputs').filter(value => value !== item)
+    const externalParameters = getExternalParameters(element);
+    modeling.updateModdleProperties(element, externalParameters, {
+      inputSpecification: externalParameters.get('inputSpecification').filter(v => v !== item)
     });
   };
 }
-
-/**
- * @param { {
- *   id: string,
- *   element: Element,
- *   item: ModdleElement,
- *   injector: Injector
- * } } props
- */
-function InputSpecificationItem(props) {
+function ToolInputSpecificationItem(props) {
   const {
     id,
     element,
@@ -719,7 +685,7 @@ function InputSpecificationItem(props) {
   } = props;
   return {
     id,
-    label: `${item.name || ''} : ${item.type}`,
+    label: `${item.name || ''} : ${item.type || 'string'}`,
     entries: [{
       id: `${id}-name`,
       component: Name,
@@ -733,11 +699,6 @@ function InputSpecificationItem(props) {
     }, {
       id: `${id}-description`,
       component: Description,
-      item,
-      element
-    }, {
-      id: `${id}-schema`,
-      component: Schema,
       item,
       element
     }, {
@@ -745,135 +706,6 @@ function InputSpecificationItem(props) {
       component: Required,
       item,
       element
-    }],
-    autoFocusEntry: id + '-name',
-    remove: removeInputSpecificationFactory(element, item, injector.get('modeling'))
-  };
-}
-
-// output specification /////////////////
-
-function createOutputSpecificationGroup(element, injector) {
-  const translate = injector.get('translate');
-  const outputSpecifications = getOutputSpecifications(element);
-  const outputSpecificationGroup = {
-    id: 'output-specification',
-    label: translate('Output specification'),
-    tooltip: translate('Specify output variables that this element produces.'),
-    component: _bpmn_io_properties_panel__WEBPACK_IMPORTED_MODULE_2__.ListGroup,
-    add: addOutputSpecificationFactory(element, injector),
-    items: outputSpecifications.map(function (outputSpecification, index) {
-      const id = `${element.id}-output-specification-${index}`;
-      return OutputSpecificationItem({
-        id,
-        element,
-        item: outputSpecification,
-        injector
-      });
-    })
-  };
-  return outputSpecificationGroup;
-}
-function addOutputSpecificationFactory(element, injector) {
-  const bpmnFactory = injector.get('bpmnFactory'),
-    commandStack = injector.get('commandStack');
-  function add(event) {
-    event.stopPropagation();
-    const commands = [];
-    const businessObject = getIoSpecificationParent(element);
-    let extensionElements = getExtensionElements(businessObject);
-    if (!extensionElements) {
-      extensionElements = createExtensionElements(businessObject, bpmnFactory);
-      commands.push({
-        cmd: 'element.updateModdleProperties',
-        context: {
-          element,
-          moddleElement: businessObject,
-          properties: {
-            extensionElements
-          }
-        }
-      });
-    }
-    const extensionElementValues = extensionElements.get('values');
-    let ioSpecification = extensionElementValues.find(v => (0,bpmn_js_lib_util_ModelUtil_js__WEBPACK_IMPORTED_MODULE_1__.is)(v, 'ccon:IoSpecification'));
-    if (!ioSpecification) {
-      ioSpecification = createIoSpecification(extensionElements, bpmnFactory);
-      commands.push({
-        cmd: 'element.updateModdleProperties',
-        context: {
-          element,
-          moddleElement: extensionElements,
-          properties: {
-            values: extensionElementValues.concat(ioSpecification)
-          }
-        }
-      });
-    }
-    const outputSpecification = createOutputSpecification(ioSpecification, bpmnFactory, {
-      name: `variable_${ids.next()}`,
-      type: 'string',
-      description: '',
-      schema: ''
-    });
-    commands.push({
-      cmd: 'element.updateModdleProperties',
-      context: {
-        element,
-        moddleElement: ioSpecification,
-        properties: {
-          outputs: ioSpecification.get('outputs').concat(outputSpecification)
-        }
-      }
-    });
-    return commandStack.execute('properties-panel.multi-command-executor', commands);
-  }
-  return add;
-}
-function removeOutputSpecificationFactory(element, item, modeling) {
-  return function (event) {
-    event.stopPropagation();
-    const businessObject = getIoSpecificationParent(element);
-    const ioSpecification = getIoSpecification(businessObject);
-    modeling.updateModdleProperties(element, ioSpecification, {
-      outputs: ioSpecification.get('outputs').filter(value => value !== item)
-    });
-  };
-}
-
-/**
- * @param { {
- *   id: string,
- *   element: Element,
- *   item: ModdleElement,
- *   injector: Injector
- * } } props
- */
-function OutputSpecificationItem(props) {
-  const {
-    id,
-    element,
-    item,
-    injector
-  } = props;
-  return {
-    id,
-    label: `${item.name || ''} : ${item.type}`,
-    entries: [{
-      id: `${id}-name`,
-      component: Name,
-      item,
-      element
-    }, {
-      id: `${id}-type`,
-      component: Type,
-      item,
-      element
-    }, {
-      id: `${id}-description`,
-      component: Description,
-      item,
-      element
     }, {
       id: `${id}-schema`,
       component: Schema,
@@ -881,7 +713,7 @@ function OutputSpecificationItem(props) {
       element
     }],
     autoFocusEntry: id + '-name',
-    remove: removeOutputSpecificationFactory(element, item, injector.get('modeling'))
+    remove: removeExternalInputSpecificationFactory(element, item, injector.get('modeling'))
   };
 }
 
@@ -1059,13 +891,26 @@ class ProcessIoExtensionProvider {
   }
   getGroups(element) {
     return groups => {
-      if (!canHaveIoSpecification(element)) {
-        return groups;
+      const result = groups.slice();
+
+      // "Tool inputs" group for start events and AHSP children
+      if (isToolInputTarget(element)) {
+        const insertIndex = findInsertIndex(result);
+        result.splice(insertIndex, 0, createToolInputsGroup(element, this._injector));
       }
-      const insertIndex = findInsertIndex(groups);
-      return [...groups.slice(0, insertIndex), createInputSpecificationGroup(element, this._injector), createOutputSpecificationGroup(element, this._injector), ...groups.slice(insertIndex)];
+      return result;
     };
   }
+}
+function isToolInputTarget(element) {
+  const bo = (0,bpmn_js_lib_util_ModelUtil_js__WEBPACK_IMPORTED_MODULE_1__.getBusinessObject)(element);
+  if ((0,bpmn_js_lib_util_ModelUtil_js__WEBPACK_IMPORTED_MODULE_1__.is)(element, 'bpmn:StartEvent') && (0,bpmn_js_lib_util_ModelUtil_js__WEBPACK_IMPORTED_MODULE_1__.is)(bo.$parent, 'bpmn:Process')) {
+    return true;
+  }
+  if ((0,bpmn_js_lib_util_ModelUtil_js__WEBPACK_IMPORTED_MODULE_1__.is)(element, 'bpmn:FlowNode') && (0,bpmn_js_lib_util_ModelUtil_js__WEBPACK_IMPORTED_MODULE_1__.is)(bo.$parent, 'bpmn:AdHocSubProcess')) {
+    return true;
+  }
+  return false;
 }
 function findInsertIndex(groups) {
   let afterGroups = ['general', 'documentation', 'general', 'ElementTemplates__Template'];
@@ -1092,6 +937,52 @@ function findInsertIndex(groups) {
   return insertBefore;
 }
 ProcessIoExtensionProvider.$inject = ['propertiesPanel', 'injector'];
+var zeebeExternalParameters = {
+  name: 'ZeebeExternalParametersExtension',
+  prefix: 'specext',
+  uri: 'http://camunda.org/schema/spec-extension/1.0',
+  xml: {
+    tagAlias: 'lowerCase'
+  },
+  associations: [],
+  types: [{
+    name: 'ExternalParameters',
+    superClass: ['Element'],
+    properties: [{
+      name: 'inputSpecification',
+      type: 'InputSpecification',
+      isMany: true,
+      xml: {
+        serialize: 'asElement'
+      }
+    }]
+  }, {
+    name: 'InputSpecification',
+    superClass: ['Element'],
+    properties: [{
+      name: 'name',
+      isAttr: true,
+      type: 'String'
+    }, {
+      name: 'description',
+      isAttr: true,
+      type: 'String'
+    }, {
+      name: 'type',
+      isAttr: true,
+      type: 'String'
+    }, {
+      name: 'required',
+      isAttr: true,
+      type: 'Boolean'
+    }, {
+      name: 'schema',
+      isAttr: true,
+      type: 'String'
+    }]
+  }],
+  enumerations: []
+};
 var index = {
   __init__: ['propertiesPanelIoExtensionProvider'],
   propertiesPanelIoExtensionProvider: ['type', ProcessIoExtensionProvider]
@@ -2210,17 +2101,6 @@ function merge(target, ...sources) {
 
 
 
-/***/ },
-
-/***/ "../zeebe-io-moddle/resources/ccon.json"
-/*!**********************************************!*\
-  !*** ../zeebe-io-moddle/resources/ccon.json ***!
-  \**********************************************/
-(module) {
-
-"use strict";
-module.exports = /*#__PURE__*/JSON.parse('{"name":"ccon","prefix":"ccon","uri":"http://ccon.camunda.io","xml":{"tagAlias":"lowerCase"},"associations":[],"types":[{"name":"IoSpecification","superClass":["Element"],"properties":[{"name":"inputs","isMany":true,"type":"InputSpecification"},{"name":"outputs","isMany":true,"type":"OutputSpecfication"}],"meta":{"allowedIn":["bpmn:Process","bpmn:Activity","bpmn:Event"]}},{"name":"InputSpecification","properties":[{"name":"name","isAttr":true,"type":"String"},{"name":"description","isAttr":true,"type":"String"},{"name":"type","isAttr":true,"type":"String"},{"name":"required","isAttr":true,"type":"Boolean","default":true},{"name":"schema","isAttr":true,"type":"String"}]},{"name":"OutputSpecification","properties":[{"name":"name","isAttr":true,"type":"String"},{"name":"description","isAttr":true,"type":"String"},{"name":"type","isAttr":true,"type":"String"},{"name":"schema","isAttr":true,"type":"String"}]}]}');
-
 /***/ }
 
 /******/ 	});
@@ -2295,12 +2175,10 @@ var __webpack_exports__ = {};
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var camunda_modeler_plugin_helpers__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! camunda-modeler-plugin-helpers */ "../../node_modules/camunda-modeler-plugin-helpers/index.js");
 /* harmony import */ var zeebe_io_properties_panel_extension__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! zeebe-io-properties-panel-extension */ "../zeebe-io-properties-panel-extension/dist/index.js");
-/* harmony import */ var zeebe_io_moddle_resources_ccon_json__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! zeebe-io-moddle/resources/ccon.json */ "../zeebe-io-moddle/resources/ccon.json");
-
 
 
 (0,camunda_modeler_plugin_helpers__WEBPACK_IMPORTED_MODULE_0__.registerCloudBpmnJSPlugin)(zeebe_io_properties_panel_extension__WEBPACK_IMPORTED_MODULE_1__["default"]);
-(0,camunda_modeler_plugin_helpers__WEBPACK_IMPORTED_MODULE_0__.registerCloudBpmnJSModdleExtension)(zeebe_io_moddle_resources_ccon_json__WEBPACK_IMPORTED_MODULE_2__);
+(0,camunda_modeler_plugin_helpers__WEBPACK_IMPORTED_MODULE_0__.registerCloudBpmnJSModdleExtension)(zeebe_io_properties_panel_extension__WEBPACK_IMPORTED_MODULE_1__.externalParametersModdle);
 })();
 
 /******/ })()
