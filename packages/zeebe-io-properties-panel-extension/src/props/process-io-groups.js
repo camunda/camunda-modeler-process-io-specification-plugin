@@ -1,19 +1,16 @@
 import { useService } from 'bpmn-js-properties-panel';
 
-import { is } from 'bpmn-js/lib/util/ModelUtil.js';
+import { getBusinessObject } from 'bpmn-js/lib/util/ModelUtil.js';
 
 import { CheckboxEntry, ListGroup, TextAreaEntry, TextFieldEntry } from '@bpmn-io/properties-panel';
 
 import {
-  getInputSpecifications,
-  getOutputSpecifications,
-  getIoSpecificationParent,
-  createInputSpecification,
   createExtensionElements,
   getExtensionElements,
-  createIoSpecification,
-  getIoSpecification,
-  createOutputSpecification
+  getExternalInputSpecifications,
+  getExternalParameters,
+  createExternalParameters,
+  createExternalInputSpecification
 } from '../process-io-helper.js';
 
 import { Ids } from 'ids';
@@ -22,36 +19,33 @@ import { Ids } from 'ids';
 const ids = new Ids([ 16, 36, 1 ]);
 
 
-// input specification //////////////////
+// tool inputs (zeebe:ExternalParameters) ////////
 
-export function createInputSpecificationGroup(element, injector) {
+export function createToolInputsGroup(element, injector) {
   const translate = injector.get('translate');
 
-  const inputSpecifications = getInputSpecifications(element);
+  const inputSpecifications = getExternalInputSpecifications(element);
 
-  const inputSpecificationGroup = {
-    id: 'input-specification',
-    label: translate('Input specification'),
-    tooltip: translate('Specify input variables that this element consumes.'),
+  return {
+    id: 'tool-inputs-group',
+    label: translate('Tool inputs'),
+    tooltip: translate('Specify tool input parameters for MCP or Agent Connector.'),
     component: ListGroup,
-    add: addInputSpecificationFactory(element, injector),
-    items: inputSpecifications.map(function(inputSpecification, index) {
-      const id = `${element.id}-input-specification-${index}`;
+    add: addExternalInputSpecificationFactory(element, injector),
+    items: inputSpecifications.map(function(param, index) {
+      const id = `${element.id}-tool-input-${index}`;
 
-      return InputSpecificationItem({
+      return ToolInputSpecificationItem({
         id,
         element,
-        item: inputSpecification,
+        item: param,
         injector
       });
     })
   };
-
-  return inputSpecificationGroup;
 }
 
-
-function addInputSpecificationFactory(element, injector) {
+function addExternalInputSpecificationFactory(element, injector) {
   const bpmnFactory = injector.get('bpmnFactory'),
         commandStack = injector.get('commandStack');
 
@@ -60,7 +54,7 @@ function addInputSpecificationFactory(element, injector) {
 
     const commands = [];
 
-    const businessObject = getIoSpecificationParent(element);
+    const businessObject = getBusinessObject(element);
 
     let extensionElements = getExtensionElements(businessObject);
 
@@ -72,19 +66,17 @@ function addInputSpecificationFactory(element, injector) {
         context: {
           element,
           moddleElement: businessObject,
-          properties: {
-            extensionElements
-          }
+          properties: { extensionElements }
         }
       });
-    };
+    }
 
     const extensionElementValues = extensionElements.get('values');
 
-    let ioSpecification = extensionElementValues.find(v => is(v, 'ccon:IoSpecification'));
+    let externalParameters = getExternalParameters(element);
 
-    if (!ioSpecification) {
-      ioSpecification = createIoSpecification(extensionElements, bpmnFactory);
+    if (!externalParameters) {
+      externalParameters = createExternalParameters(extensionElements, bpmnFactory);
 
       commands.push({
         cmd: 'element.updateModdleProperties',
@@ -92,16 +84,17 @@ function addInputSpecificationFactory(element, injector) {
           element,
           moddleElement: extensionElements,
           properties: {
-            values: extensionElementValues.concat(ioSpecification)
+            values: extensionElementValues.concat(externalParameters)
           }
         }
       });
     }
 
-    const inputSpecification = createInputSpecification(ioSpecification, bpmnFactory, {
-      name: `variable_${ids.next()}`,
+    const inputSpecification = createExternalInputSpecification(bpmnFactory, {
+      name: `param_${ids.next()}`,
       type: 'string',
       description: '',
+      required: true,
       schema: ''
     });
 
@@ -109,9 +102,9 @@ function addInputSpecificationFactory(element, injector) {
       cmd: 'element.updateModdleProperties',
       context: {
         element,
-        moddleElement: ioSpecification,
+        moddleElement: externalParameters,
         properties: {
-          inputs: ioSpecification.get('inputs').concat(inputSpecification)
+          inputSpecification: externalParameters.get('inputSpecification').concat(inputSpecification)
         }
       }
     });
@@ -122,240 +115,36 @@ function addInputSpecificationFactory(element, injector) {
   return add;
 }
 
-function removeInputSpecificationFactory(element, item, modeling) {
+function removeExternalInputSpecificationFactory(element, item, modeling) {
   return function(event) {
     event.stopPropagation();
 
-    const businessObject = getIoSpecificationParent(element);
+    const externalParameters = getExternalParameters(element);
 
-    const ioSpecification = getIoSpecification(businessObject);
-
-    modeling.updateModdleProperties(element, ioSpecification, {
-      inputs: ioSpecification.get('inputs').filter(value => value !== item)
+    modeling.updateModdleProperties(element, externalParameters, {
+      inputSpecification: externalParameters.get('inputSpecification').filter(v => v !== item)
     });
   };
 }
 
-/**
- * @param { {
- *   id: string,
- *   element: Element,
- *   item: ModdleElement,
- *   injector: Injector
- * } } props
- */
-function InputSpecificationItem(props) {
-  const {
-    id,
-    element,
-    item,
-    injector
-  } = props;
+function ToolInputSpecificationItem(props) {
+  const { id, element, item, injector } = props;
 
   return {
     id,
-    label: `${item.name || ''} : ${item.type}`,
+    label: `${item.name || ''} : ${item.type || 'string'}`,
     entries: [
-      {
-        id: `${id}-name`,
-        component: Name,
-        item,
-        element
-      },
-      {
-        id: `${id}-type`,
-        component: Type,
-        item,
-        element
-      },
-      {
-        id: `${id}-description`,
-        component: Description,
-        item,
-        element
-      },
-      {
-        id: `${id}-schema`,
-        component: Schema,
-        item,
-        element
-      },
-      {
-        id: `${id}-required`,
-        component: Required,
-        item,
-        element
-      }
+      { id: `${id}-name`, component: Name, item, element },
+      { id: `${id}-type`, component: Type, item, element },
+      { id: `${id}-description`, component: Description, item, element },
+      { id: `${id}-required`, component: Required, item, element },
+      { id: `${id}-schema`, component: Schema, item, element }
     ],
     autoFocusEntry: id + '-name',
-    remove: removeInputSpecificationFactory(element, item, injector.get('modeling'))
+    remove: removeExternalInputSpecificationFactory(element, item, injector.get('modeling'))
   };
 }
 
-// output specification /////////////////
-
-export function createOutputSpecificationGroup(element, injector) {
-  const translate = injector.get('translate');
-
-  const outputSpecifications = getOutputSpecifications(element);
-
-  const outputSpecificationGroup = {
-    id: 'output-specification',
-    label: translate('Output specification'),
-    tooltip: translate('Specify output variables that this element produces.'),
-    component: ListGroup,
-    add: addOutputSpecificationFactory(element, injector),
-    items: outputSpecifications.map(function(outputSpecification, index) {
-      const id = `${element.id}-output-specification-${index}`;
-
-      return OutputSpecificationItem({
-        id,
-        element,
-        item: outputSpecification,
-        injector
-      });
-    })
-  };
-
-  return outputSpecificationGroup;
-}
-
-
-function addOutputSpecificationFactory(element, injector) {
-  const bpmnFactory = injector.get('bpmnFactory'),
-        commandStack = injector.get('commandStack');
-
-  function add(event) {
-    event.stopPropagation();
-
-    const commands = [];
-
-    const businessObject = getIoSpecificationParent(element);
-
-    let extensionElements = getExtensionElements(businessObject);
-
-    if (!extensionElements) {
-      extensionElements = createExtensionElements(businessObject, bpmnFactory);
-
-      commands.push({
-        cmd: 'element.updateModdleProperties',
-        context: {
-          element,
-          moddleElement: businessObject,
-          properties: {
-            extensionElements
-          }
-        }
-      });
-    };
-
-    const extensionElementValues = extensionElements.get('values');
-
-    let ioSpecification = extensionElementValues.find(v => is(v, 'ccon:IoSpecification'));
-
-    if (!ioSpecification) {
-      ioSpecification = createIoSpecification(extensionElements, bpmnFactory);
-
-      commands.push({
-        cmd: 'element.updateModdleProperties',
-        context: {
-          element,
-          moddleElement: extensionElements,
-          properties: {
-            values: extensionElementValues.concat(ioSpecification)
-          }
-        }
-      });
-    }
-
-    const outputSpecification = createOutputSpecification(ioSpecification, bpmnFactory, {
-      name: `variable_${ids.next()}`,
-      type: 'string',
-      description: '',
-      schema: ''
-    });
-
-    commands.push({
-      cmd: 'element.updateModdleProperties',
-      context: {
-        element,
-        moddleElement: ioSpecification,
-        properties: {
-          outputs: ioSpecification.get('outputs').concat(outputSpecification)
-        }
-      }
-    });
-
-    return commandStack.execute('properties-panel.multi-command-executor', commands);
-  }
-
-  return add;
-}
-
-function removeOutputSpecificationFactory(element, item, modeling) {
-  return function(event) {
-    event.stopPropagation();
-
-    const businessObject = getIoSpecificationParent(element);
-
-    const ioSpecification = getIoSpecification(businessObject);
-
-    modeling.updateModdleProperties(element, ioSpecification, {
-      outputs: ioSpecification.get('outputs').filter(value => value !== item)
-    });
-  };
-}
-
-
-/**
- * @param { {
- *   id: string,
- *   element: Element,
- *   item: ModdleElement,
- *   injector: Injector
- * } } props
- */
-function OutputSpecificationItem(props) {
-  const {
-    id,
-    element,
-    item,
-    injector
-  } = props;
-
-  return {
-    id,
-    label: `${item.name || ''} : ${item.type}`,
-    entries: [
-      {
-        id: `${id}-name`,
-        component: Name,
-        item,
-        element
-      },
-      {
-        id: `${id}-type`,
-        component: Type,
-        item,
-        element
-      },
-      {
-        id: `${id}-description`,
-        component: Description,
-        item,
-        element
-      },
-      {
-        id: `${id}-schema`,
-        component: Schema,
-        item,
-        element
-      }
-    ],
-    autoFocusEntry: id + '-name',
-    remove: removeOutputSpecificationFactory(element, item, injector.get('modeling'))
-  };
-}
 
 // individual properties ///////////
 
