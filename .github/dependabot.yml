@@ -14,3 +14,5 @@ updates:
     versioning-strategy: "increase-if-necessary"
     # Disable version updates unless they are for security reasons.
     open-pull-requests-limit: 0
+    cooldown:
+      default-days: 7
